@@ -85,7 +85,7 @@ export function TravelHero() {
             size="lg"
             variant="outline"
             onClick={() => scrollToSection('contact-section')}
-            className="border-2 border-white text-white hover:bg-white/10"
+            className="border-2 border-white text-white text-gray-300 hover:bg-white/10"
           >
             Contact Us
           </Button>
