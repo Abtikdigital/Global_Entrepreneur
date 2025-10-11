@@ -96,16 +96,17 @@ export function DestinationsPage() {
       </div>
 
       {/* Destinations Grid */}
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-2 gap-8">
+      <div className="max-w-7xl mx-auto px-6 h-full">
+        <div className="grid md:grid-cols-2 gap-8 h-full">
           {destinations.map((destination, index) => (
-            <Card key={index} className="overflow-hidden hover:shadow-2xl transition-all duration-300">
-              <div className="md:flex">
-                <div className="md:w-2/5 relative h-64 md:h-auto">
+            <Card key={index} className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300">
+              <div className="md:flex h-full">
+                <div className="md:w-2/5 relative h-full ">
                   <ImageWithFallback
                     src={destination.image}
                     alt={destination.name}
-                    className="w-full h-full object-cover"
+                    
+                    className="w-full min-h-full  "
                   />
                   <div className="absolute top-4 right-4 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full flex items-center gap-1">
                     <Star size={14} className="fill-yellow-400 text-yellow-400" />

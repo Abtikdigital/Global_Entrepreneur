@@ -18,9 +18,9 @@ export function TravelNavigation({ currentPage, onNavigate }: NavigationProps) {
 
   const menuItems = [
     { id: 'home', label: 'Home' },
+    { id: 'about', label: 'About Us' },
     { id: 'destinations', label: 'Destinations' },
     { id: 'packages', label: 'Packages' },
-    { id: 'about', label: 'About Us' },
   ];
 
   return (

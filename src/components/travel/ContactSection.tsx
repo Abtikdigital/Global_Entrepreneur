@@ -153,7 +153,7 @@ export function ContactSection() {
 
         <div className="mt-8 text-center">
           <p className="text-sm text-muted-foreground">
-            Contact Person: <span className="text-foreground">Mann R. Umraniya & Pushprajsinh D. Gohil</span>
+            Contact Person: <span className="text-foreground">Global Pioneers Tours & Travels</span>
           </p>
         </div>
       </div>
