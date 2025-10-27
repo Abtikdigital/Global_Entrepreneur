@@ -1,23 +1,14 @@
+import React from 'react';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
-import { Input } from '../ui/input';
-import { Textarea } from '../ui/textarea';
-import { Mail, Phone, MapPin, Send, MessageCircle } from 'lucide-react';
-import { useState } from 'react';
+import { Mail, Phone, MessageCircle, Send } from 'lucide-react';
+import { useDialog } from '../../contexts/DialogContext';
 
 export function ContactSection() {
-  const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
-    destination: '',
-    message: ''
-  });
+  const { openDialog } = useDialog();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    alert('Thank you for your inquiry! We will contact you soon.');
-    setFormData({ name: '', email: '', phone: '', destination: '', message: '' });
+  const handleInquiry = () => {
+    openDialog({});
   };
 
   const contactInfo = [
@@ -85,70 +76,16 @@ export function ContactSection() {
 
         <Card className="p-8 max-w-4xl mx-auto bg-white">
           <h3 className="mb-6 text-center">Send Us Your Travel Requirements</h3>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block mb-2">Full Name *</label>
-                <Input
-                  required
-                  placeholder="Enter your name"
-                  value={formData.name}
-                  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Email Address *</label>
-                <Input
-                  required
-                  type="email"
-                  placeholder="your@email.com"
-                  value={formData.email}
-                  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <label className="block mb-2">Phone Number *</label>
-                <Input
-                  required
-                  type="tel"
-                  placeholder="+91 XXXXX XXXXX"
-                  value={formData.phone}
-                  onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                />
-              </div>
-              <div>
-                <label className="block mb-2">Preferred Destination</label>
-                <Input
-                  placeholder="e.g., Maldives, Dubai, Europe"
-                  value={formData.destination}
-                  onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
-                />
-              </div>
-            </div>
-
-            <div>
-              <label className="block mb-2">Your Requirements *</label>
-              <Textarea
-                required
-                placeholder="Tell us about your travel plans, group size, budget, preferred dates..."
-                rows={5}
-                value={formData.message}
-                onChange={(e) => setFormData({ ...formData, message: e.target.value })}
-              />
-            </div>
-
+          <div className="text-center">
             <Button 
-              type="submit"
+              onClick={handleInquiry}
               size="lg"
-              className="w-full bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
+              className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
             >
               Submit Inquiry
               <Send className="ml-2" size={18} />
             </Button>
-          </form>
+          </div>
         </Card>
 
         <div className="mt-8 text-center">

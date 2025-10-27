@@ -1,15 +1,32 @@
+import React from 'react';
 import { Card } from '../ui/card';
 import { Button } from '../ui/button';
-import { Check, Star, Calendar, Users, Plane, Hotel, Utensils, Camera } from 'lucide-react';
+import { Check, Star, Calendar } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
+import { useDialog } from '../../contexts/DialogContext';
+
+interface Package {
+  name: string;
+  image: string;
+  duration: string;
+  rating: number;
+  price: string;
+  includes: string[];
+  highlights: string;
+}
 
 export function PackagesPage() {
+  const { openDialog } = useDialog();
+
+  const handleViewDetails = (pkg: Package) => {
+    openDialog(pkg);
+  };
   const packages = {
     luxury: [
       {
         name: 'Maldives Luxury Escape',
-        image: 'https://images.unsplash.com/photo-1614505241347-7f4765c1035e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWxkaXZlcyUyMHJlc29ydCUyMGx1eHVyeXxlbnwxfHx8fDE3NjAwOTk4Njh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/maldives-resort.jpg',
         duration: '6 Days / 5 Nights',
         rating: 4.9,
         price: '₹89,999',
@@ -18,7 +35,7 @@ export function PackagesPage() {
       },
       {
         name: 'Dubai Premium Package',
-        image: 'https://images.unsplash.com/photo-1647886056843-d2fc10e57cd4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkdWJhaSUyMHNreWxpbmUlMjB0cmF2ZWx8ZW58MXx8fHwxNzYwMDk5ODY4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/dubai-skylines.jpg',
         duration: '5 Days / 4 Nights',
         rating: 4.8,
         price: '₹64,999',
@@ -29,7 +46,7 @@ export function PackagesPage() {
     adventure: [
       {
         name: 'Himalayan Trek Experience',
-        image: 'https://images.unsplash.com/photo-1602479623676-86b0ca2449e3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhZHZlbnR1cmUlMjBtb3VudGFpbiUyMHRyZWt8ZW58MXx8fHwxNzYwMDk5ODY1fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/adventure-trek.jpg',
         duration: '7 Days / 6 Nights',
         rating: 4.7,
         price: '₹28,999',
@@ -38,7 +55,7 @@ export function PackagesPage() {
       },
       {
         name: 'Thailand Adventure Tour',
-        image: 'https://images.unsplash.com/photo-1702743599501-a821d0b38b66?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0cm9waWNhbCUyMGJlYWNoJTIwcGFyYWRpc2V8ZW58MXx8fHwxNzYwMDc5NDQ5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/tropical-beach.jpg',
         duration: '6 Days / 5 Nights',
         rating: 4.6,
         price: '₹42,999',
@@ -49,7 +66,7 @@ export function PackagesPage() {
     corporate: [
       {
         name: 'Corporate Retreat - Goa',
-        image: 'https://images.unsplash.com/photo-1718580161785-cecf979772cb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb3Jwb3JhdGUlMjBidXNpbmVzcyUyMHRyYXZlbHxlbnwxfHx8fDE3NjAwOTk4NjZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/corporate-travel.jpg',
         duration: '3 Days / 2 Nights',
         rating: 4.8,
         price: '₹15,999',
@@ -58,7 +75,7 @@ export function PackagesPage() {
       },
       {
         name: 'Dubai Business Package',
-        image: 'https://images.unsplash.com/photo-1647886056843-d2fc10e57cd4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkdWJhaSUyMHNreWxpbmUlMjB0cmF2ZWx8ZW58MXx8fHwxNzYwMDk5ODY4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/dubai-skylines.jpg',
         duration: '4 Days / 3 Nights',
         rating: 4.9,
         price: '₹54,999',
@@ -69,7 +86,7 @@ export function PackagesPage() {
     religious: [
       {
         name: 'Char Dham Yatra',
-        image: 'https://images.unsplash.com/photo-1759990251993-3e350f67cd31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWxpZ2lvdXMlMjB0ZW1wbGUlMjBwaWxncmltYWdlfGVufDF8fHx8MTc2MDA5OTg2NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/temple-pilgrimage.jpg',
         duration: '10 Days / 9 Nights',
         rating: 5.0,
         price: '₹32,999',
@@ -78,7 +95,7 @@ export function PackagesPage() {
       },
       {
         name: 'Varanasi & Prayagraj Tour',
-        image: 'https://images.unsplash.com/photo-1759990251993-3e350f67cd31?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxyZWxpZ2lvdXMlMjB0ZW1wbGUlMjBwaWxncmltYWdlfGVufDF8fHx8MTc2MDA5OTg2NXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+        image: '/images/temple-pilgrimage.jpg',
         duration: '5 Days / 4 Nights',
         rating: 4.9,
         price: '₹16,999',
@@ -88,7 +105,7 @@ export function PackagesPage() {
     ],
   };
 
-  const PackageCard = ({ pkg }: { pkg: any }) => (
+  const PackageCard = ({ pkg }: { pkg: Package }) => (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300">
       <div className="relative h-48">
         <ImageWithFallback
@@ -130,8 +147,11 @@ export function PackagesPage() {
             <span className="text-2xl text-blue-600">{pkg.price}</span>
             <span className="text-xs text-muted-foreground">/person</span>
           </div>
-          <Button className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600">
-            Book Now
+          <Button 
+            onClick={() => handleViewDetails(pkg)}
+            className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
+          >
+            View Details
           </Button>
         </div>
       </div>
@@ -139,21 +159,21 @@ export function PackagesPage() {
   );
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-24 pb-12 sm:pb-16">
       {/* Hero Section */}
-      <div className="relative h-96 mb-16">
+      <div className="relative h-72 sm:h-96 md:h-[450px] lg:h-[500px] mb-8 sm:mb-12 md:mb-16 overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1758739824218-049eeab22d11?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjB0cmF2ZWwlMjBkZXN0aW5hdGlvbnxlbnwxfHx8fDE3NjAwMjQ0ODl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          src="/images/luxury-travel-hero.jpg"
           alt="Packages"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center scale-110 hover:scale-100 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
         <div className="absolute inset-0 flex items-center justify-center text-center">
-          <div className="max-w-3xl px-6">
-            <h1 className="text-white mb-4" style={{ fontSize: '3rem' }}>
+          <div className="max-w-3xl px-4 sm:px-6">
+            <h1 className="text-white mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
               Our Travel Packages
             </h1>
-            <p className="text-white/90 text-xl">
+            <p className="text-white/90 text-base sm:text-lg md:text-xl">
               Carefully curated packages for every type of traveler and budget
             </p>
           </div>
@@ -161,9 +181,9 @@ export function PackagesPage() {
       </div>
 
       {/* Packages Content */}
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         <Tabs defaultValue="luxury" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 mb-12">
+          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-8 sm:mb-12">
             <TabsTrigger value="luxury">Luxury Travel</TabsTrigger>
             <TabsTrigger value="adventure">Adventure</TabsTrigger>
             <TabsTrigger value="corporate">Corporate</TabsTrigger>
@@ -222,6 +242,7 @@ export function PackagesPage() {
           </Button>
         </Card>
       </div>
+
     </div>
   );
 }

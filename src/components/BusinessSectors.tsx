@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card } from './ui/card';
 import { Factory, Zap, ShoppingCart, Wrench, ArrowRight } from 'lucide-react';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -8,28 +9,28 @@ export function BusinessSectors() {
       icon: Factory,
       title: 'Industrial Automation',
       description: 'Advanced automation solutions for manufacturing and industrial processes, incorporating AI, IoT, and robotics for enhanced productivity.',
-      image: 'https://images.unsplash.com/photo-1738918897772-0ba101be25c8?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxpbmR1c3RyaWFsJTIwYXV0b21hdGlvbiUyMGZhY3Rvcnl8ZW58MXx8fHwxNzU5OTc0NDc2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/industrial-automation.jpg',
       features: ['PLC & SCADA Systems', 'Robotics Integration', 'Process Optimization', 'Predictive Maintenance']
     },
     {
       icon: Zap,
       title: 'Smart Energy Solutions',
       description: 'Innovative energy management systems, renewable energy integration, and smart grid technologies for sustainable power solutions.',
-      image: 'https://images.unsplash.com/photo-1655958370938-a960fe73abb4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzbWFydCUyMGVuZXJneSUyMHRlY2hub2xvZ3l8ZW58MXx8fHwxNzYwMDgwNzk5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/smart-energy.jpg',
       features: ['Energy Management', 'Renewable Integration', 'Smart Grid Technology', 'Energy Efficiency']
     },
     {
       icon: ShoppingCart,
       title: 'Global Trading',
       description: 'International trade and export-import services, connecting global markets with quality products and reliable logistics.',
-      image: 'https://images.unsplash.com/photo-1566576721346-d4a3b4eaeb55?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnbG9iYWwlMjB0cmFkaW5nJTIwYnVzaW5lc3N8ZW58MXx8fHwxNzYwMDgwNzk5fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/global-trading.jpg',
       features: ['Import-Export Services', 'Supply Chain Management', 'Quality Assurance', 'Global Partnerships']
     },
     {
       icon: Wrench,
       title: 'Engineering Solutions',
       description: 'Comprehensive engineering services including design, consulting, project management, and technical support across industries.',
-      image: 'https://images.unsplash.com/photo-1758387933125-5ac945b4e2cd?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxlbmdpbmVlcmluZyUyMHNvbHV0aW9ucyUyMHRlY2hub2xvZ3l8ZW58MXx8fHwxNzYwMDgwODAwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/engineering-solutions.jpg',
       features: ['Design & Engineering', 'Project Management', 'Technical Consulting', 'Installation & Support']
     },
   ];

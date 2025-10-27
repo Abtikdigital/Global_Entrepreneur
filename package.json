@@ -1,5 +1,5 @@
 {
-      "name": "Design ArKaTech Logo",
+      "name": "global-pioneers-travel",
       "version": "0.1.0",
       "private": true,
       "dependencies": {
@@ -29,6 +29,9 @@
             "@radix-ui/react-toggle": "^1.1.2",
             "@radix-ui/react-toggle-group": "^1.1.2",
             "@radix-ui/react-tooltip": "^1.1.8",
+            "@tailwindcss/postcss": "^4.1.16",
+            "@tailwindcss/vite": "^4.1.16",
+            "axios": "^1.12.2",
             "class-variance-authority": "^0.7.1",
             "clsx": "*",
             "cmdk": "^1.1.1",
@@ -41,15 +44,26 @@
             "react-dom": "^18.3.1",
             "react-hook-form": "^7.55.0",
             "react-resizable-panels": "^2.1.7",
+            "react-router-dom": "^7.9.4",
             "recharts": "^2.15.2",
             "sonner": "^2.0.3",
+            "sweetalert2": "^11.26.3",
             "tailwind-merge": "*",
             "vaul": "^1.1.2"
       },
       "devDependencies": {
             "@types/node": "^20.10.0",
+            "@types/react-router-dom": "^5.3.3",
+            "@typescript-eslint/eslint-plugin": "^8.46.2",
+            "@typescript-eslint/parser": "^8.46.2",
             "@vitejs/plugin-react-swc": "^3.10.2",
+            "autoprefixer": "^10.4.21",
             "daisyui": "^5.3.10",
+            "eslint": "^9.38.0",
+            "eslint-plugin-react": "^7.37.5",
+            "eslint-plugin-react-hooks": "^7.0.1",
+            "postcss": "^8.5.6",
+            "tailwindcss": "^4.1.16",
             "vite": "6.3.5"
       },
       "scripts": {

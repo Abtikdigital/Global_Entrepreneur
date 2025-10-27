@@ -12,7 +12,7 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
     {
       name: 'Maldives',
       location: 'Indian Ocean',
-      image: 'https://images.unsplash.com/photo-1614505241347-7f4765c1035e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtYWxkaXZlcyUyMHJlc29ydCUyMGx1eHVyeXxlbnwxfHx8fDE3NjAwOTk4Njh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/maldives-resort.jpg',
       rating: 4.9,
       description: 'Paradise beaches and luxury resorts',
       price: '₹89,999'
@@ -20,7 +20,7 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
     {
       name: 'Dubai',
       location: 'United Arab Emirates',
-      image: 'https://images.unsplash.com/photo-1647886056843-d2fc10e57cd4?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkdWJhaSUyMHNreWxpbmUlMjB0cmF2ZWx8ZW58MXx8fHwxNzYwMDk5ODY4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/dubai-skylines.jpg',
       rating: 4.8,
       description: 'Modern marvels and desert adventures',
       price: '₹54,999'
@@ -28,7 +28,7 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
     {
       name: 'Taj Mahal',
       location: 'Agra, India',
-      image: 'https://images.unsplash.com/photo-1564507592333-c60657eea523?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx0YWolMjBtYWhhbCUyMGluZGlhfGVufDF8fHx8MTc2MDAyNzY5Nnww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/taj-mahal.jpg',
       rating: 5.0,
       description: 'Iconic monument of love',
       price: '₹12,999'
@@ -36,7 +36,7 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
     {
       name: 'Europe',
       location: 'Multi-Country',
-      image: 'https://images.unsplash.com/photo-1564055938706-76a0c26f9ef3?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxldXJvcGUlMjB0cmF2ZWwlMjBhcmNoaXRlY3R1cmV8ZW58MXx8fHwxNzYwMDk5ODY4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral',
+      image: '/images/europe-architecture.jpg',
       rating: 4.9,
       description: 'Rich history and culture',
       price: '₹1,49,999'
@@ -59,7 +59,11 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
 
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {destinations.map((destination, index) => (
-            <Card key={index} className="overflow-hidden group hover:shadow-2xl transition-all duration-300">
+            <Card 
+              key={index} 
+              className="overflow-hidden group hover:shadow-2xl transition-all duration-300 cursor-pointer"
+              onClick={() => onNavigate?.('destinations')}
+            >
               <div className="relative h-64 overflow-hidden">
                 <ImageWithFallback
                   src={destination.image}
@@ -86,13 +90,9 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
                     <span className="text-sm text-muted-foreground">Starting from</span>
                     <div className="text-blue-600">{destination.price}</div>
                   </div>
-                  <Button 
-                    size="sm" 
-                    variant="ghost"
-                    className="text-blue-600 hover:text-blue-700"
-                  >
-                    Details <ArrowRight size={14} className="ml-1" />
-                  </Button>
+                  <div className="text-blue-600 group-hover:text-blue-700 transition-colors">
+                    Details <ArrowRight size={14} className="inline ml-1" />
+                  </div>
                 </div>
               </div>
             </Card>

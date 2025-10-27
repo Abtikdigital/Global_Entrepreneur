@@ -1,19 +1,54 @@
+import { Link } from 'react-router-dom';
 import { Mail, Phone, MapPin, Facebook, Instagram, Twitter, Linkedin, Plane } from 'lucide-react';
 
-interface FooterProps {
-  onNavigate: (page: string) => void;
-}
-
-export function TravelFooter({ onNavigate }: FooterProps) {
+export function TravelFooter() {
   const currentYear = new Date().getFullYear();
 
-  const handleNavigate = (page: string) => {
-    onNavigate(page);
+  const handleNavigate = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
   return (
-    <footer className="bg-slate-900 text-white py-16">
+    <>
+      <style>{`
+        @media (min-width: 1024px) {
+          .footer-link {
+            position: relative;
+            transition: color 0.3s ease;
+          }
+          
+          .footer-link::after {
+            content: '';
+            position: absolute;
+            bottom: -4px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: linear-gradient(to right, #06b6d4, #2563eb);
+            transition: width 0.3s ease;
+          }
+          
+          .footer-link:hover::after {
+            width: 100%;
+          }
+        }
+        
+        .section-fade-in {
+          animation: fadeIn 0.6s ease-out;
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+      `}</style>
+      <footer className="bg-slate-900 text-white py-16 section-fade-in">
       <div className="max-w-7xl mx-auto px-6">
         <div className="grid md:grid-cols-4 gap-12 mb-12">
           {/* Company Info */}
@@ -57,24 +92,24 @@ export function TravelFooter({ onNavigate }: FooterProps) {
             <h4 className="mb-4 text-white">Quick Links</h4>
             <ul className="space-y-3">
               <li>
-                <button onClick={() => handleNavigate('home')} className="text-white/70 hover:text-cyan-400 transition-colors">
+                <Link to="/" onClick={handleNavigate} className="footer-link text-white/70 lg:hover:text-cyan-400 transition-colors">
                   Home
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleNavigate('destinations')} className="text-white/70 hover:text-cyan-400 transition-colors">
+                <Link to="/destinations" onClick={handleNavigate} className="footer-link text-white/70 lg:hover:text-cyan-400 transition-colors">
                   Destinations
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleNavigate('packages')} className="text-white/70 hover:text-cyan-400 transition-colors">
+                <Link to="/packages" onClick={handleNavigate} className="footer-link text-white/70 lg:hover:text-cyan-400 transition-colors">
                   Packages
-                </button>
+                </Link>
               </li>
               <li>
-                <button onClick={() => handleNavigate('about')} className="text-white/70 hover:text-cyan-400 transition-colors">
+                <Link to="/about" onClick={handleNavigate} className="footer-link text-white/70 lg:hover:text-cyan-400 transition-colors">
                   About Us
-                </button>
+                </Link>
               </li>
             </ul>
           </div>
@@ -117,10 +152,10 @@ export function TravelFooter({ onNavigate }: FooterProps) {
               © {currentYear} Global Pioneers Tours & Travels Private Limited. All rights reserved.
             </p>
             <div className="flex gap-6 text-sm">
-              <a href="#" className="text-white/60 hover:text-cyan-400 transition-colors">
+              <a href="#" className="footer-link text-white/60 lg:hover:text-cyan-400 transition-colors">
                 Privacy Policy
               </a>
-              <a href="#" className="text-white/60 hover:text-cyan-400 transition-colors">
+              <a href="#" className="footer-link text-white/60 lg:hover:text-cyan-400 transition-colors">
                 Terms & Conditions
               </a>
             </div>
@@ -128,5 +163,6 @@ export function TravelFooter({ onNavigate }: FooterProps) {
         </div>
       </div>
     </footer>
+    </>
   );
 }

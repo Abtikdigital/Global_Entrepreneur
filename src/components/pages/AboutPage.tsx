@@ -49,31 +49,31 @@ export function AboutPage() {
   ];
 
   return (
-    <div className="min-h-screen pt-24 pb-16">
+    <div className="min-h-screen pt-24 pb-12 sm:pb-16">
       {/* Hero Section */}
-      <div className="relative h-96 mb-16">
+      <div className="relative h-72 sm:h-96 md:h-[450px] lg:h-[500px] mb-8 sm:mb-12 md:mb-16 overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1758797316117-8d133af25f8c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdHVkZW50JTIwZ3JvdXAlMjB0cmF2ZWx8ZW58MXx8fHwxNzYwMDk5ODY2fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          src="/images/student-group-travel.jpg"
           alt="About Us"
-          className="w-full h-full object-cover"
+          className="w-full h-full object-cover object-center scale-110 hover:scale-100 transition-transform duration-700"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 to-black/50"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
         <div className="absolute inset-0 flex items-center justify-center text-center">
-          <div className="max-w-3xl px-6">
-            <h1 className="text-white mb-4" style={{ fontSize: '3rem' }}>
+          <div className="max-w-3xl px-4 sm:px-6">
+            <h1 className="text-white mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
               About Global Pioneers
             </h1>
-            <p className="text-white/90 text-xl">
+            <p className="text-white/90 text-base sm:text-lg md:text-xl">
               Creating unforgettable travel experiences since years
             </p>
           </div>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Who We Are */}
-        <div className="mb-16">
-          <div className="grid md:grid-cols-2 gap-12 items-center">
+        <div className="mb-12 sm:mb-16">
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div>
               <div className="inline-block px-4 py-2 rounded-full mb-4 bg-blue-50 text-blue-600">
                 Who We Are
@@ -96,9 +96,9 @@ export function AboutPage() {
                 we handle everything from planning to execution, allowing you to simply enjoy your trip.
               </p>
             </div>
-            <div className="relative h-96 rounded-2xl overflow-hidden shadow-2xl">
+            <div className="relative h-64 sm:h-80 md:h-96 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl">
               <ImageWithFallback
-                src="https://images.unsplash.com/photo-1733686891008-f30ac27128ab?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkZXN0aW5hdGlvbiUyMHdlZGRpbmclMjBiZWFjaHxlbnwxfHx8fDE3NjAwOTk4Njl8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+                src="/images/wedding-beach.jpg"
                 alt="Travel Experience"
                 className="w-full h-full object-cover"
               />
@@ -107,7 +107,7 @@ export function AboutPage() {
         </div>
 
         {/* Mission & Vision */}
-        <div className="grid md:grid-cols-2 gap-8 mb-16">
+        <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
           <Card className="p-8 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-100">
             <Target size={40} className="text-blue-600 mb-4" />
             <h3 className="mb-3">Our Mission</h3>

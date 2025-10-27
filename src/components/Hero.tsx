@@ -1,3 +1,4 @@
+import React from 'react';
 import { ArKaTechLogo } from './ArKaTechLogo';
 import { Button } from './ui/button';
 import { ArrowRight, ChevronDown } from 'lucide-react';
@@ -16,7 +17,7 @@ export function Hero() {
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <ImageWithFallback
-          src="https://images.unsplash.com/photo-1661669999755-1e5b36d9e9ba?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjB0ZWNobm9sb2d5JTIwYmFja2dyb3VuZHxlbnwxfHx8fDE3NjAwMTQwMTF8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral"
+          src="/images/technology-hero.jpg"
           alt="Technology Background"
           className="w-full h-full object-cover"
         />
