@@ -1,5 +1,5 @@
 import { Button } from '../ui/button';
-import { ArrowRight, Search, MapPin, Calendar } from 'lucide-react';
+import { ArrowRight, Search, MapPin, Calendar, Plane } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
 import { Input } from '../ui/input';
 
@@ -26,8 +26,9 @@ export function TravelHero() {
       {/* Content */}
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-32 md:py-40 text-center">
         <div className="max-w-4xl mx-auto mb-12">
-          <div className="inline-block px-4 py-2 rounded-full mb-6 bg-white/10 backdrop-blur-sm border border-white/20">
-            <span className="text-white">✈️ Your Journey Begins Here</span>
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full mb-6 bg-white/10 backdrop-blur-sm border border-white/20">
+            <Plane size={18} className="text-white" />
+            <span className="text-white">Your Journey Begins Here</span>
           </div>
           
           <h1 className="text-white mb-6" style={{ fontSize: '3.5rem', lineHeight: '1.1' }}>
@@ -85,7 +86,7 @@ export function TravelHero() {
             size="lg"
             variant="outline"
             onClick={() => scrollToSection('contact-section')}
-            className="border-2 border-white text-white text-gray-300 hover:bg-white/10"
+            className="border-2 border-white text-white hover:bg-white/10"
           >
             Contact Us
           </Button>

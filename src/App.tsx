@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import React, { useState } from 'react';
 import { TravelNavigation } from './components/travel/TravelNavigation';
 import { TravelHero } from './components/travel/TravelHero';
 import { TravelServices } from './components/travel/TravelServices';
@@ -12,6 +12,7 @@ import { AboutPage } from './components/pages/AboutPage';
 
 export default function App() {
   const [currentPage, setCurrentPage] = useState('home');
+  const [isDialogOpen, setIsDialogOpen] = useState(true);
 
   const renderPage = () => {
     switch (currentPage) {
@@ -51,6 +52,20 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      {/* DaisyUI Modal */}
+      <dialog className={`modal ${isDialogOpen ? 'modal-open' : ''}`}>
+        <div className="modal-box">
+          <h3 className="font-bold text-lg">Welcome to Global Pioneers!</h3>
+          <p className="py-4">Your journey to amazing destinations starts here. Explore our travel packages and discover the world.</p>
+          <div className="modal-action">
+            <button className="btn" onClick={() => setIsDialogOpen(false)}>Get Started</button>
+          </div>
+        </div>
+        <form method="dialog" className="modal-backdrop">
+          <button onClick={() => setIsDialogOpen(false)}>close</button>
+        </form>
+      </dialog>
+
       <TravelNavigation currentPage={currentPage} onNavigate={setCurrentPage} />
       {renderPage()}
       <TravelFooter onNavigate={setCurrentPage} />
