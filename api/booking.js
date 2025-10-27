@@ -10,7 +10,7 @@ const { SMTP_HOST_NAME, SMTP_PORT, SECURE, MONGODB_URI, SMTP_MAIL, SMTP_PASS } =
 let cached = null;
 const dbConnection = async () => {
   try {
-    if (cached) {
+    if (cached && cached.connection.readyState === 1) {
       return cached;
     }
     cached = await mongoose.connect(MONGODB_URI, {
@@ -18,16 +18,17 @@ const dbConnection = async () => {
       useUnifiedTopology: true,
       bufferCommands: false,
       serverSelectionTimeoutMS: 5000,
-      tls: true,
     });
+    console.log("Database connected successfully");
     return cached;
   } catch (error) {
-    console.log("Error While Connecting Database");
+    console.error("Error While Connecting Database:", error);
+    throw error;
   }
 };
 
 // MONGODB SCHEMA
-const bookingSchema = mongoose.Schema(
+const bookingSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -45,7 +46,7 @@ const bookingSchema = mongoose.Schema(
       required: [true, "* Phone is required"],
     },
     persons: {
-      type: String,
+      type: Number,
       required: [true, "* Number of persons is required"],
     },
     destination: {
@@ -102,9 +103,10 @@ const bookingValidationSchema = joi.object({
       "string.base": "* Email Must Be String",
       "string.required": "* Email is required",
     }),
-  persons: joi.string().required().messages({
-    "string.base": "* Number of persons Must Be String",
-    "string.required": "* Number of persons is required",
+  persons: joi.number().min(1).required().messages({
+    "number.base": "* Number of persons Must Be Number",
+    "number.min": "* Please enter at least 1 person",
+    "any.required": "* Number of persons is required",
   }),
   destination: joi.string().allow('').optional(),
   budget: joi.string().allow('').optional(),
@@ -117,14 +119,11 @@ const bookingValidationSchema = joi.object({
 
 // TRANSPORTER
 const transporter = nodemailer.createTransport({
-  // host: SMTP_HOST_NAME,
   service: 'gmail',
   auth: {
     user: SMTP_MAIL,
     pass: SMTP_PASS,
   },
-  // port: parseInt(SMTP_PORT),
-  // secure: SECURE === 'true',
 });
 
 // SEND MAIL
@@ -137,10 +136,11 @@ const sendMail = async (from, to, subject, template) => {
       html: template,
     });
     if (info) {
-      console.log("Mail Sent Successfully");
+      console.log("Mail Sent Successfully to:", to);
     }
   } catch (error) {
-    console.log("Error While Sending Mail", error);
+    console.error("Error While Sending Mail:", error);
+    throw error;
   }
 };
 
@@ -233,6 +233,7 @@ const firmTemplate = (data) => {
             color: #444;
             border-bottom: 1px solid #f0f0f0;
             padding: 18px 24px;
+            text-align: left;
           }
           tr:last-child td {
             border-bottom: none;
@@ -246,6 +247,7 @@ const firmTemplate = (data) => {
             font-weight: 500;
           }
           .footer {
+            margin-top: 10px;
             background-color: #fcfcfc;
             font-size: 14px;
             color: #888;
@@ -253,7 +255,6 @@ const firmTemplate = (data) => {
             border-top: 1px solid #eee;
             padding: 25px 40px;
           }
-          
           @media only screen and (max-width: 600px) {
             .content {
               padding: 30px 20px;
@@ -262,63 +263,33 @@ const firmTemplate = (data) => {
               padding: 25px 15px;
               font-size: 20px;
             }
+            table {
+              border-radius: 8px;
+            }
           }
         </style>
       </head>
       <body>
         <div class="email-wrapper">
           <div class="header">
-            🌍 Global Pioneers Tours & Travels
+            Global Pioneers Tours & Travels
           </div>
           <div class="header-divider"></div>
           <div class="content">
-            <h2>New Booking Inquiry</h2>
-            <p class="highlight">You have received a new travel booking inquiry with the following details:</p>
+            <h2>📧 New Booking Inquiry</h2>
+            <p class="highlight">You have received a new booking inquiry with the following details:</p>
             <table>
-              <tr>
-                <th>Full Name</th>
-                <td>${name}</td>
-              </tr>
-              <tr>
-                <th>Email</th>
-                <td><a href="mailto:${email}">${email}</a></td>
-              </tr>
-              <tr>
-                <th>Phone Number</th>
-                <td><a href="tel:+91${phone}">${phone}</a></td>
-              </tr>
-              <tr>
-                <th>Number of Persons</th>
-                <td>${persons}</td>
-              </tr>
-              ${destination ? `<tr>
-                <th>Destination</th>
-                <td>${destination}</td>
-              </tr>` : ''}
-              ${budget ? `<tr>
-                <th>Budget Per Person</th>
-                <td>${budget}</td>
-              </tr>` : ''}
-              ${date ? `<tr>
-                <th>Travel Date</th>
-                <td>${date}</td>
-              </tr>` : ''}
-              ${packageName ? `<tr>
-                <th>Package Name</th>
-                <td>${packageName}</td>
-              </tr>` : ''}
-              ${packagePrice ? `<tr>
-                <th>Package Price</th>
-                <td>${packagePrice}</td>
-              </tr>` : ''}
-              ${packageDuration ? `<tr>
-                <th>Package Duration</th>
-                <td>${packageDuration}</td>
-              </tr>` : ''}
-              ${tourDetails ? `<tr>
-                <th>Additional Details</th>
-                <td>${tourDetails}</td>
-              </tr>` : ''}
+              <tr><th>Full Name</th><td>${name}</td></tr>
+              <tr><th>Email</th><td><a href="mailto:${email}">${email}</a></td></tr>
+              <tr><th>Phone Number</th><td><a href="tel:+91${phone}">${phone}</a></td></tr>
+              <tr><th>Number of Persons</th><td>${persons}</td></tr>
+              ${destination ? `<tr><th>Destination</th><td>${destination}</td></tr>` : ''}
+              ${budget ? `<tr><th>Budget Per Person</th><td>${budget}</td></tr>` : ''}
+              ${date ? `<tr><th>Preferred Travel Date</th><td>${date}</td></tr>` : ''}
+              ${packageName ? `<tr><th>Package Name</th><td>${packageName}</td></tr>` : ''}
+              ${packagePrice ? `<tr><th>Package Price</th><td>${packagePrice}</td></tr>` : ''}
+              ${packageDuration ? `<tr><th>Package Duration</th><td>${packageDuration}</td></tr>` : ''}
+              ${tourDetails ? `<tr><th>Tour Related Details</th><td>${tourDetails}</td></tr>` : ''}
             </table>
           </div>
           <div class="footer">
@@ -330,17 +301,16 @@ const firmTemplate = (data) => {
   `;
 };
 
-// User Template (for customer)
+// User Template (for applicant)
 const userTemplate = (data) => {
-  let { name, email, phone, persons, destination, budget, date, tourDetails, packageName, packagePrice, packageDuration } = data;
-
+  let { name, destination, date, packageName } = data;
   return `
     <!DOCTYPE html>
     <html>
       <head>
         <meta charset="utf-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Booking Confirmation - Global Pioneers Tours & Travels</title>
+        <title>Thank You for Your Inquiry - Global Pioneers Tours & Travels</title>
         <style>
           body, html {
             margin: 0;
@@ -365,7 +335,7 @@ const userTemplate = (data) => {
           }
           .header {
             text-align: center;
-            background: linear-gradient(135deg, #2563eb, #06b6d4);
+            background: linear-gradient(135deg, #1e40af, #06b6d4);
             padding: 35px 20px;
             color: white;
             font-size: 24px;
@@ -391,26 +361,14 @@ const userTemplate = (data) => {
             line-height: 1.6;
           }
           .highlight {
-            background-color: rgba(37, 99, 235, 0.08);
-            border-left: 4px solid #2563eb;
+            background-color: rgba(30, 64, 175, 0.08);
+            border-left: 4px solid #1e40af;
             padding: 15px;
             margin-bottom: 25px;
           }
-          .message-box {
-            background-color: #f0f9ff;
-            border-radius: 12px;
-            padding: 25px;
-            margin: 30px 0;
-            border: 1px solid #dbeafe;
-          }
-          .message-box h3 {
-            margin-top: 0;
-            color: #2563eb;
-            font-size: 18px;
-          }
           .button {
             display: inline-block;
-            background: linear-gradient(to right, #2563eb, #06b6d4);
+            background: linear-gradient(to right, #1e40af, #06b6d4);
             color: white;
             text-decoration: none;
             padding: 12px 28px;
@@ -420,6 +378,7 @@ const userTemplate = (data) => {
             text-align: center;
           }
           .footer {
+            margin-top: 10px;
             background-color: #fcfcfc;
             font-size: 14px;
             color: #888;
@@ -427,7 +386,6 @@ const userTemplate = (data) => {
             border-top: 1px solid #eee;
             padding: 25px 40px;
           }
-          
           @media only screen and (max-width: 600px) {
             .content {
               padding: 30px 20px;
@@ -442,33 +400,19 @@ const userTemplate = (data) => {
       <body>
         <div class="email-wrapper">
           <div class="header">
-            🌍 Global Pioneers Tours & Travels
+            Global Pioneers Tours & Travels
           </div>
           <div class="header-divider"></div>
           <div class="content">
-            <h2>Thank You for Your Booking Inquiry!</h2>
-            <p class="highlight">Dear ${name}, thank you for choosing Global Pioneers Tours & Travels! We've received your booking inquiry and are excited to help plan your next adventure.</p>
+            <h2>Thank You for Your Inquiry!</h2>
+            <p class="highlight">Dear ${name}, thank you for your interest in Global Pioneers Tours & Travels! We've received your inquiry${packageName || destination ? ` for ${packageName || destination}` : ''} and appreciate your interest in our services.</p>
             
-            <div class="message-box">
-              <h3>What happens next?</h3>
-              <p>Our travel expert team will review your inquiry and contact you within 24 hours to:</p>
-              <ul style="margin: 10px 0; padding-left: 20px;">
-                <li>Discuss your travel preferences</li>
-                <li>Provide customized package options</li>
-                <li>Answer any questions you may have</li>
-                <li>Finalize your travel plans</li>
-              </ul>
-            </div>
-            
-            <p>We're committed to making your travel experience memorable and stress-free. Whether you're looking for a luxury getaway, adventure tour, or cultural exploration, we have the perfect itinerary for you.</p>
+            <p>Our travel experts will review your inquiry and contact you within 1-2 business days with a personalized plan.</p>
             
             <center><a href="https://globalpioneertravels.in/" class="button">Visit Our Website</a></center>
-            
-            <p>If you have any urgent questions, please don't hesitate to contact us at <strong><a href="tel:+919328100195">+91 93281 00195</a></strong> or <strong><a href="tel:+918160150178">+91 81601 50178</a></strong>. You can also reach us via email at <strong><a href="mailto:sales@globalpioneertravels.in">sales@globalpioneertravels.in</a></strong>.</p>
           </div>
           <div class="footer">
-            Thank you for choosing Global Pioneers Tours & Travels.<br>
-            © ${new Date().getFullYear()} Global Pioneers Tours & Travels Private Limited. All rights reserved.
+            Thank you for choosing Global Pioneers Tours & Travels.
           </div>
         </div>
       </body>
@@ -477,46 +421,83 @@ const userTemplate = (data) => {
 };
 
 // MAIN FUNCTION
-const handler = async (req, res) => {
+module.exports = async (req, res) => {
   if (req.method !== "POST") {
     return res
       .status(405)
       .json({ isSuccess: false, message: "Only Post Method Is Allowed" });
   }
+  
   try {
+    console.log("Request received:", JSON.stringify(req.body, null, 2));
+    
+    // Check environment variables
+    if (!MONGODB_URI || !SMTP_MAIL || !SMTP_PASS) {
+      console.error("Missing environment variables:", {
+        MONGODB_URI: !!MONGODB_URI,
+        SMTP_MAIL: !!SMTP_MAIL,
+        SMTP_PASS: !!SMTP_PASS
+      });
+      return res.status(500).json({ 
+        isSuccess: false, 
+        message: "Server configuration error - Missing environment variables"
+      });
+    }
+    
     await dbConnection();
+    
     let { name, phone, email, persons, destination, budget, date, tourDetails, packageName, packagePrice, packageDuration } = req.body;
     
+    // Convert persons to number if it's a string
+    const personsNumber = typeof persons === 'string' ? parseInt(persons, 10) : persons;
+    
     let { error } = bookingValidationSchema.validate({ 
-      name, phone, email, persons, destination, budget, date, tourDetails, 
+      name, phone, email, persons: personsNumber, destination, budget, date, tourDetails, 
       packageName, packagePrice, packageDuration 
     });
     
     if (error) {
+      console.error("Validation error:", error.details[0].message);
       return res
         .status(400)
-        .json({ isSuccess: false, message: "Validation Error", error });
+        .json({ 
+          isSuccess: false, 
+          message: error.details[0].message
+        });
     }
 
-    let newBooking = new BookingModel(req.body);
+    // Create booking with converted persons value
+    const bookingData = {
+      ...req.body,
+      persons: personsNumber
+    };
+    
+    let newBooking = new BookingModel(bookingData);
     let isSaved = await newBooking.save();
     
     if (isSaved) {
-      await Promise.all([
-        await sendMail(
-          SMTP_MAIL,
-          email,
-          "Thank You for Your Booking Inquiry - Global Pioneers Tours & Travels",
-          userTemplate(req.body)
-        ),
-        await sendMail(
-          SMTP_MAIL,
-          SMTP_MAIL,
-          `New Booking Inquiry from ${name}`,
-          firmTemplate(req.body)
-        ),
-      ]);
-      res.status(201).json({
+      try {
+        await Promise.all([
+          sendMail(
+            SMTP_MAIL,
+            email,
+            "Thank You for Your Booking Inquiry - Global Pioneers Tours & Travels",
+            userTemplate(req.body)
+          ),
+          sendMail(
+            SMTP_MAIL,
+            SMTP_MAIL,
+            `New Booking Inquiry from ${name}`,
+            firmTemplate(req.body)
+          ),
+        ]);
+        console.log("Emails sent successfully");
+      } catch (emailError) {
+        console.error("Error sending emails:", emailError);
+        // Don't fail the request if emails fail - booking is already saved
+      }
+      
+      return res.status(201).json({
         isSuccess: true,
         message: "Booking Inquiry Submitted Successfully",
       });
@@ -527,12 +508,13 @@ const handler = async (req, res) => {
       });
     }
   } catch (error) {
-    console.log("Server Error:", error);
+    console.error("Server Error:", error);
+    console.error("Error stack:", error.stack);
     return res
       .status(500)
-      .json({ isSuccess: false, message: "Internal Server Error" });
+      .json({ 
+        isSuccess: false, 
+        message: error.message || "Internal Server Error"
+      });
   }
 };
-
-export default handler;
-
