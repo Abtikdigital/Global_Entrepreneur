@@ -103,11 +103,10 @@ export function TravelHero() {
               </div>
               <Button 
                 onClick={handleSearch}
-                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 h-full text-sm sm:text-base"
+                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 h-full text-sm sm:text-base whitespace-nowrap"
               >
-                <Search size={18} className="sm:w-5 sm:h-5 mr-2" />
-                <span className="hidden sm:inline">Search Packages</span>
-                <span className="sm:hidden">Search</span>
+                <Search size={18} className="mr-2" />
+                Search Packages
               </Button>
             </div>
           </div>

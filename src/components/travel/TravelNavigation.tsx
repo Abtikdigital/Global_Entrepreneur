@@ -75,14 +75,14 @@ export function TravelNavigation() {
           }
         }
       `}</style>
-      <nav className="fixed top-0  left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm animate-[fadeInDown_0.3s_ease-out]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 md:py-4">
-          <div className="flex items-center justify-between">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm animate-[fadeInDown_0.3s_ease-out]">
+        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-3 md:py-4">
+          <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <Link 
               to="/"
               onClick={handleNavigate}
-              className="flex items-center gap-2 hover:opacity-80 transition-opacity group"
+              className="flex items-center gap-2 hover:opacity-80 transition-opacity group flex-shrink-0"
             >
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
                 <Plane size={20} className="text-white" />
@@ -97,28 +97,32 @@ export function TravelNavigation() {
               </div>
             </Link>
 
-            {/* Desktop Navigation */}
-            <div className="hidden lg:flex items-center gap-2 xl:gap-8">
+            {/* Desktop Navigation - Centered */}
+            <div className="hidden md:flex items-center gap-3 lg:gap-6 xl:gap-8 flex-1 justify-center">
               {menuItems.map((item) => (
                 <Link
                   key={item.path}
                   to={item.path}
                   onClick={handleNavigate}
-                  className={`nav-link ${isActive(item.path) ? 'active' : ''}`}
+                  className={`nav-link whitespace-nowrap ${isActive(item.path) ? 'active' : ''}`}
                 >
                   {item.label}
                 </Link>
               ))}
+            </div>
+
+            {/* Right Side Actions */}
+            <div className="hidden md:flex items-center gap-3 flex-shrink-0">
               <a
                 href="tel:+919328100195"
-                className="hidden xl:flex items-center gap-2 text-foreground hover:text-blue-600 transition-colors px-4"
+                className="hidden lg:flex items-center gap-2 text-foreground hover:text-blue-600 transition-colors px-3 whitespace-nowrap"
               >
                 <Phone size={18} />
                 <span>+91 93281 00195</span>
               </a>
               <Button 
                 onClick={() => openDialog({})}
-                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 hover:scale-105 transition-transform"
+                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 hover:scale-105 transition-transform whitespace-nowrap px-3 py-2 text-sm"
               >
                 Book Now
               </Button>
@@ -126,7 +130,7 @@ export function TravelNavigation() {
 
             {/* Mobile/Tablet Menu Button */}
             <button
-              className="lg:hidden p-2 transition-transform hover:scale-110"
+              className="md:hidden p-2 transition-transform hover:scale-110 flex-shrink-0"
               onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
               {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
@@ -135,7 +139,7 @@ export function TravelNavigation() {
 
           {/* Mobile/Tablet Menu */}
           {isMenuOpen && (
-            <div className="lg:hidden mt-4 py-4 border-t border-border mobile-menu-enter">
+            <div className="md:hidden mt-4 py-4 border-t border-border mobile-menu-enter">
               <div className="flex flex-col gap-4">
                 {menuItems.map((item) => (
                   <Link

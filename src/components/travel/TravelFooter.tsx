@@ -50,9 +50,9 @@ export function TravelFooter() {
       `}</style>
       <footer className="bg-slate-900 text-white py-16 section-fade-in">
       <div className="max-w-7xl mx-auto px-6">
-        <div className="grid md:grid-cols-4 gap-12 mb-12">
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 lg:gap-12 mb-12">
           {/* Company Info */}
-          <div className="md:col-span-2">
+          <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center">
                 <Plane size={20} className="text-white" />
@@ -147,7 +147,7 @@ export function TravelFooter() {
 
         {/* Bottom Bar */}
         <div className="pt-8 border-t border-white/10">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+          <div className="flex flex-col lg:flex-row justify-between items-center gap-4">
             <p className="text-white/60 text-sm">
               © {currentYear} Global Pioneers Tours & Travels Private Limited. All rights reserved.
             </p>

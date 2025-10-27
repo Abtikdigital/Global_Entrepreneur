@@ -100,7 +100,7 @@ export function DestinationsPage() {
 
       {/* Destinations Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 h-full">
-        <div className="grid md:grid-cols-2 gap-4 sm:gap-6 md:gap-8 h-full">
+        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 md:gap-8 h-full">
           {destinations.map((destination, index) => (
             <Card key={index} className="overflow-hidden h-full hover:shadow-2xl transition-all duration-300">
               <div className="md:flex h-full">

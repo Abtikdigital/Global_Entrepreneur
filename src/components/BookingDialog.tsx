@@ -115,7 +115,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           confirmButtonColor: '#2563eb',
           confirmButtonText: 'OK',
         });
-        handleClose();
+    handleClose();
       } else {
         throw new Error(data.message || 'Failed to submit booking');
       }
