@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card } from '../ui/card';
 import { Target, Eye, Award, Users, Globe, Heart, Shield, Clock } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
@@ -73,7 +74,7 @@ export function AboutPage() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6">
         {/* Who We Are */}
         <div className="mb-12 sm:mb-16">
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-6 sm:gap-12 items-center">
             <div>
               <div className="inline-block px-4 py-2 rounded-full mb-4 bg-blue-50 text-blue-600">
                 Who We Are

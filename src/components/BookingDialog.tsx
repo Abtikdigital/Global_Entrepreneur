@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import { Calendar, Star, X, Loader2 } from 'lucide-react';
 import Swal from 'sweetalert2';
 import axios from 'axios';
+import { useForm } from 'react-hook-form';
 
 interface PackageDetails {
   name?: string;
@@ -21,93 +22,68 @@ interface BookingDialogProps {
   packageDetails: PackageDetails | null;
 }
 
+interface FormData {
+  name: string;
+  phone: string;
+  email: string;
+  persons: string;
+  destination: string;
+  budget: string;
+  date: string;
+  tourDetails: string;
+}
+
 export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialogProps) {
-  const [formData, setFormData] = useState({
-    name: '',
-    phone: '',
-    email: '',
-    persons: '',
-    destination: packageDetails?.destination || '',
-    budget: '',
-    date: packageDetails?.date || '',
-    tourDetails: '',
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors, isSubmitting },
+    setValue,
+  } = useForm<FormData>({
+    defaultValues: {
+      name: '',
+      phone: '',
+      email: '',
+      persons: '',
+      destination: '',
+      budget: '',
+      date: '',
+      tourDetails: '',
+    },
   });
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [errors, setErrors] = useState<{ [key: string]: string }>({});
 
   // Update form when packageDetails changes
-  React.useEffect(() => {
+  useEffect(() => {
     if (packageDetails) {
-      setFormData(prev => ({
-        ...prev,
-        destination: packageDetails.destination || prev.destination,
-        date: packageDetails.date || prev.date,
-      }));
+      if (packageDetails.destination) {
+        setValue('destination', packageDetails.destination);
+      }
+      if (packageDetails.date) {
+        setValue('date', packageDetails.date);
+      }
     }
-  }, [packageDetails]);
+  }, [packageDetails, setValue]);
 
-  const validateForm = () => {
-    const newErrors: { [key: string]: string } = {};
-
-    if (!formData.name.trim()) {
-      newErrors.name = 'Name is required';
-    }
-
-    if (!formData.phone.trim()) {
-      newErrors.phone = 'Phone is required';
-    } else if (!/^[6-9]\d{9}$/.test(formData.phone.replace(/\D/g, ''))) {
-      newErrors.phone = 'Please enter a valid 10-digit phone number';
-    }
-
-    if (!formData.email.trim()) {
-      newErrors.email = 'Email is required';
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address';
-    }
-
-    if (!formData.persons.trim()) {
-      newErrors.persons = 'Number of persons is required';
-    } else if (parseInt(formData.persons) < 1) {
-      newErrors.persons = 'Please enter at least 1 person';
-    }
-
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    if (!validateForm()) {
-      Swal.fire({
-        icon: 'error',
-        title: 'Validation Error',
-        text: 'Please fill in all required fields correctly',
-        confirmButtonColor: '#2563eb',
-      });
-      return;
-    }
-
-    setIsSubmitting(true);
-
+  const onSubmit = async (data: FormData) => {
     try {
       const response = await axios.post('/api/booking', {
-        name: formData.name,
-        phone: formData.phone,
-        email: formData.email,
-        persons: formData.persons,
-        destination: formData.destination,
-        budget: formData.budget,
-        date: formData.date,
-        tourDetails: formData.tourDetails,
+        name: data.name,
+        phone: data.phone,
+        email: data.email,
+        persons: data.persons,
+        destination: data.destination,
+        budget: data.budget,
+        date: data.date,
+        tourDetails: data.tourDetails,
         packageName: packageDetails?.name,
         packagePrice: packageDetails?.price,
         packageDuration: packageDetails?.duration,
       });
 
-      const data = response.data;
+      const result = response.data;
 
-      if (data.isSuccess) {
+      if (result.isSuccess) {
         await Swal.fire({
           icon: 'success',
           title: 'Booking Submitted Successfully!',
@@ -115,9 +91,9 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           confirmButtonColor: '#2563eb',
           confirmButtonText: 'OK',
         });
-    handleClose();
+        handleClose();
       } else {
-        throw new Error(data.message || 'Failed to submit booking');
+        throw new Error(result.message || 'Failed to submit booking');
       }
     } catch (error: any) {
       console.error('Booking submission error:', error);
@@ -137,30 +113,14 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
         confirmButtonColor: '#dc2626',
         confirmButtonText: 'OK',
       });
-    } finally {
-      setIsSubmitting(false);
     }
   };
 
   const handleClose = () => {
-    setFormData({
-      name: '',
-      phone: '',
-      email: '',
-      persons: '',
-      destination: '',
-      budget: '',
-      date: '',
-      tourDetails: '',
-    });
+    reset();
+    setValue('destination', packageDetails?.destination || '');
+    setValue('date', packageDetails?.date || '');
     onClose();
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
   };
 
   if (!isOpen) return null;
@@ -220,31 +180,36 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           </div>
         )}
 
-          <form onSubmit={handleSubmit} className="custom-booking-form">
+          <form onSubmit={handleSubmit(onSubmit)} className="custom-booking-form">
             <div className="custom-form-row">
               <div className="custom-form-group">
                 <label>Full Name *</label>
                 <input 
                   type="text" 
-                name="name"
-                placeholder="Enter your full name"
-                value={formData.name}
-                onChange={handleChange}
+                  placeholder="Enter your full name" 
+                  {...register('name', { 
+                    required: 'Name is required',
+                    minLength: { value: 2, message: 'Name must be at least 2 characters' }
+                  })}
                   className={errors.name ? 'error-input' : ''}
-              />
-                {errors.name && <span className="error-message">{errors.name}</span>}
-            </div>
+                />
+                {errors.name && <span className="error-message">{errors.name.message}</span>}
+              </div>
               <div className="custom-form-group">
                 <label>Phone Number *</label>
                 <input 
                   type="tel" 
-                name="phone"
-                placeholder="Enter your phone number"
-                value={formData.phone}
-                onChange={handleChange}
+                  placeholder="Enter your phone number" 
+                  {...register('phone', { 
+                    required: 'Phone is required',
+                    pattern: {
+                      value: /^[6-9]\d{9}$/,
+                      message: 'Please enter a valid 10-digit phone number'
+                    }
+                  })}
                   className={errors.phone ? 'error-input' : ''}
-              />
-                {errors.phone && <span className="error-message">{errors.phone}</span>}
+                />
+                {errors.phone && <span className="error-message">{errors.phone.message}</span>}
               </div>
             </div>
 
@@ -252,13 +217,17 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
               <label>Email Address *</label>
               <input 
                 type="email" 
-                name="email"
-                placeholder="Enter your email"
-                value={formData.email}
-                onChange={handleChange}
+                placeholder="Enter your email" 
+                {...register('email', { 
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: 'Please enter a valid email address'
+                  }
+                })}
                 className={errors.email ? 'error-input' : ''}
               />
-              {errors.email && <span className="error-message">{errors.email}</span>}
+              {errors.email && <span className="error-message">{errors.email.message}</span>}
             </div>
 
             <div className="custom-form-row">
@@ -266,37 +235,38 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                 <label>Number of Persons *</label>
                 <input 
                   type="number" 
-                name="persons"
-                placeholder="Enter number of persons"
-                value={formData.persons}
-                onChange={handleChange}
-                min="1"
+                  placeholder="Enter number of persons" 
+                  {...register('persons', { 
+                    required: 'Number of persons is required',
+                    min: { value: 1, message: 'Please enter at least 1 person' }
+                  })} 
+                  min="1"
                   className={errors.persons ? 'error-input' : ''}
                 />
-                {errors.persons && <span className="error-message">{errors.persons}</span>}
+                {errors.persons && <span className="error-message">{errors.persons.message}</span>}
               </div>
               <div className="custom-form-group">
                 <label>Destination</label>
-                <input type="text" name="destination" placeholder="Enter destination" value={formData.destination} onChange={handleChange} />
+                <input type="text" placeholder="Enter destination" {...register('destination')} />
               </div>
             </div>
 
             <div className="custom-form-row">
               <div className="custom-form-group">
                 <label>Budget Per Person</label>
-                <input type="text" name="budget" placeholder="Enter budget per person" value={formData.budget} onChange={handleChange} />
+                <input type="text" placeholder="Enter budget per person" {...register('budget')} />
               </div>
               <div className="custom-form-group">
                 <label>Preferred Travel Date</label>
                 <div className="custom-date-wrapper">
-                  <input type="date" name="date" value={formData.date} onChange={handleChange} className="custom-date-input" />
+                  <input type="date" {...register('date')} className="custom-date-input" />
                 </div>
-            </div>
+              </div>
             </div>
 
             <div className="custom-form-group">
               <label>Tour Related Details</label>
-              <textarea name="tourDetails" placeholder="Any special requirements or tour related details..." rows={4} value={formData.tourDetails} onChange={handleChange} />
+              <textarea placeholder="Any special requirements or tour related details..." rows={4} {...register('tourDetails')} />
             </div>
 
             <div className="custom-form-actions">
