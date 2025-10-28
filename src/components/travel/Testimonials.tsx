@@ -1,3 +1,4 @@
+import React from 'react';
 import { Card } from '../ui/card';
 import { Star, Quote } from 'lucide-react';
 
@@ -34,13 +35,13 @@ export function Testimonials() {
   ];
 
   return (
-    <section className="py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="inline-block px-4 py-2 rounded-full mb-4 bg-blue-50 text-blue-600">
+    <section className="py-24 bg-background px-2 md:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 rounded-full mb-4 text-white" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
             Testimonials
           </div>
-          <h2 className="mb-4">What Our Travelers Say</h2>
+          <h2 className="mb-4" style={{fontSize: '2rem', fontWeight: 700, lineHeight: '1.3', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>What Our Travelers Say</h2>
           <p className="text-muted-foreground max-w-3xl mx-auto">
             Read authentic reviews from our satisfied customers who have experienced the joy of traveling with us.
           </p>
@@ -49,7 +50,7 @@ export function Testimonials() {
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {testimonials.map((testimonial, index) => (
             <Card key={index} className="p-6 hover:shadow-lg transition-shadow relative">
-              <Quote size={40} className="absolute top-4 right-4 text-blue-100" />
+              <Quote size={40} className="absolute top-4 right-4 opacity-20" style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}} />
               <div className="flex gap-1 mb-4">
                 {[...Array(testimonial.rating)].map((_, i) => (
                   <Star key={i} size={16} className="fill-yellow-400 text-yellow-400" />
@@ -61,7 +62,7 @@ export function Testimonials() {
               <div className="border-t border-border pt-4">
                 <p className="mb-1">{testimonial.name}</p>
                 <p className="text-xs text-muted-foreground mb-2">{testimonial.location}</p>
-                <div className="text-xs px-2 py-1 rounded-full bg-blue-50 text-blue-600 inline-block">
+                <div className="text-xs px-2 py-1 rounded-full text-white inline-block" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
                   {testimonial.trip}
                 </div>
               </div>

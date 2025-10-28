@@ -1,5 +1,5 @@
 import { Card } from '../ui/card';
-import { Palmtree, Mountain, Briefcase, Church, GraduationCap, Ship, Heart } from 'lucide-react';
+import { Palmtree, Mountain, Briefcase, Church, GraduationCap, Ship, DollarSign, FileCheck, Globe2 } from 'lucide-react';
 
 export function TravelServices() {
   const services = [
@@ -40,39 +40,52 @@ export function TravelServices() {
       color: 'from-teal-500 to-cyan-500'
     },
     {
-      icon: Heart,
-      title: 'Destination Weddings',
-      description: 'Create unforgettable memories with beautifully planned weddings in exotic locations.',
-      color: 'from-rose-500 to-pink-500'
+      icon: DollarSign,
+      title: 'Foreign Exchange Assistance',
+      description: 'Get the best currency exchange rates and hassle-free forex services for your international travel.',
+      color: 'from-emerald-500 to-teal-500'
+    },
+    {
+      icon: FileCheck,
+      title: 'Passport Assistance',
+      description: 'Complete guidance and support for passport application, renewal, and verification services.',
+      color: 'from-blue-500 to-indigo-500'
+    },
+    {
+      icon: Globe2,
+      title: 'Visa Assistance',
+      description: 'Expert visa consultation and application support for hassle-free international travel.',
+      color: 'from-purple-500 to-pink-500'
     },
   ];
 
   return (
-    <section id="services-section" className="py-24 bg-background">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="inline-block px-4 py-2 rounded-full mb-4 bg-blue-50 text-blue-600">
+    <section id="services-section" className="py-24 px-2 md:px-6 bg-background">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 rounded-full mb-4 text-white" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
             Our Services
           </div>
-          <h2 className="mb-4">Tailored Travel Experiences</h2>
+          <h2 className="mb-4" style={{fontSize: '2rem', fontWeight: 700, lineHeight: '1.3', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>Tailored Travel Experiences</h2>
           <p className="text-muted-foreground max-w-3xl mx-auto">
             From luxury getaways to adventure expeditions, we specialize in creating personalized 
             travel experiences that exceed your expectations.
           </p>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {services.map((service, index) => (
             <Card 
               key={index} 
               className="p-6 hover:shadow-xl transition-all duration-300 hover:-translate-y-2 border-2 border-transparent hover:border-blue-100"
             >
               <div 
-                className={`w-14 h-14 rounded-xl bg-gradient-to-br ${service.color} flex items-center justify-center mb-4 shadow-lg`}
+                className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 shadow-lg"
+                style={{background: 'linear-gradient(135deg, #385678, #17947F)'}}
               >
                 <service.icon size={28} className="text-white" />
               </div>
-              <h3 className="mb-3">{service.title}</h3>
+              <h3 className="mb-3" style={{fontSize: '1.5rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>{service.title}</h3>
               <p className="text-muted-foreground text-sm">
                 {service.description}
               </p>

@@ -26,7 +26,7 @@ export function PackagesPage() {
     luxury: [
       {
         name: 'Maldives Luxury Escape',
-        image: '/images/maldives-resort.jpg',
+        image: '/images/MaldivsImage.jpg',
         duration: '6 Days / 5 Nights',
         rating: 4.9,
         price: '₹89,999',
@@ -35,7 +35,7 @@ export function PackagesPage() {
       },
       {
         name: 'Dubai Premium Package',
-        image: '/images/dubai-skylines.jpg',
+        image: '/images/DubaiImage.jpg',
         duration: '5 Days / 4 Nights',
         rating: 4.8,
         price: '₹64,999',
@@ -45,17 +45,17 @@ export function PackagesPage() {
     ],
     adventure: [
       {
-        name: 'Himalayan Trek Experience',
-        image: '/images/adventure-trek.jpg',
-        duration: '7 Days / 6 Nights',
+        name: 'Manali Adventure Tour',
+        image: '/images/ManaliImage.jpg',
+        duration: '3 Days / 2 Nights',
         rating: 4.7,
         price: '₹28,999',
-        includes: ['Trekking Guide', 'Camping', 'All Meals', 'Equipment', 'Safety Gear'],
-        highlights: 'Mountain views, Camping, Adventure activities'
+        includes: ['Hotel Stay', 'Adventure Sports', 'Hot Springs', 'Temples & Monasteries', 'Transport'],
+        highlights: 'Snowy Peaks, Adventure Sports, Hot Springs, Temples & Monasteries'
       },
       {
         name: 'Thailand Adventure Tour',
-        image: '/images/tropical-beach.jpg',
+        image: '/images/ThailandImage.jpg',
         duration: '6 Days / 5 Nights',
         rating: 4.6,
         price: '₹42,999',
@@ -66,48 +66,40 @@ export function PackagesPage() {
     corporate: [
       {
         name: 'Corporate Retreat - Goa',
-        image: '/images/corporate-travel.jpg',
+        image: '/images/GoaImage.jpg',
         duration: '3 Days / 2 Nights',
         rating: 4.8,
         price: '₹15,999',
-        includes: ['Resort Stay', 'Conference Room', 'Team Activities', 'All Meals', 'Transport'],
-        highlights: 'Team building, Beachside resort, Meeting facilities'
+        includes: ['Hotel Stay', 'Beach Activities', 'Water Sports', 'Spa Treatment', 'Airport Transfer'],
+        highlights: 'Beautiful Beaches, Water Sports, Spa Treatment, Airport Transfer'
       },
-      {
-        name: 'Dubai Business Package',
-        image: '/images/dubai-skylines.jpg',
-        duration: '4 Days / 3 Nights',
-        rating: 4.9,
-        price: '₹54,999',
-        includes: ['Business Hotel', 'Meeting Rooms', 'Airport Lounge', 'City Tour', 'Networking Event'],
-        highlights: 'Central location, Business amenities, Professional service'
-      },
+    
     ],
     religious: [
       {
         name: 'Char Dham Yatra',
-        image: '/images/temple-pilgrimage.jpg',
-        duration: '10 Days / 9 Nights',
+        image: '/images/Chardhaam.jpg',
+        duration: '7 Days / 6 Nights',
         rating: 5.0,
         price: '₹32,999',
-        includes: ['Comfortable Stay', 'All Meals', 'Temple Visits', 'Experienced Guide', 'Transport'],
-        highlights: 'Four sacred shrines, Spiritual journey, Mountain scenery'
+        includes: ['Hotel Stay', 'Temple Visits', 'Experienced Guide', 'Transport'],
+        highlights: 'Four sacred shrines, Spiritual journey, Mountain scenery, Holy Ghats'
       },
       {
         name: 'Varanasi & Prayagraj Tour',
-        image: '/images/temple-pilgrimage.jpg',
-        duration: '5 Days / 4 Nights',
+        image: '/images/Varanashi.jpg',
+        duration: '3 Days / 2 Nights',
         rating: 4.9,
         price: '₹16,999',
-        includes: ['Hotel Stay', 'Ganga Aarti', 'Temple Tours', 'Boat Ride', 'Meals'],
-        highlights: 'Holy ghats, Ancient temples, Spiritual ceremonies'
+        includes: ['Hotel Stay', 'Temple Visits', 'Experienced Guide', 'Transport'],
+        highlights: 'Varanasi Ghats, Prayagraj Ghats, Spiritual journey, Mountain scenery, Holy Ghats'
       },
     ],
   };
 
   const PackageCard = ({ pkg }: { pkg: Package }) => (
     <Card className="overflow-hidden hover:shadow-xl transition-all duration-300">
-      <div className="relative h-48">
+      <div className="relative h-48 overflow-hidden">
         <ImageWithFallback
           src={pkg.image}
           alt={pkg.name}
@@ -119,7 +111,7 @@ export function PackagesPage() {
         </div>
       </div>
       <div className="p-6">
-        <h3 className="mb-2">{pkg.name}</h3>
+        <h3 className="mb-2" style={{fontSize: '1.5rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>{pkg.name}</h3>
         <div className="flex items-center gap-4 text-sm text-muted-foreground mb-4">
           <div className="flex items-center gap-1">
             <Calendar size={14} />
@@ -144,12 +136,13 @@ export function PackagesPage() {
         <div className="flex items-center justify-between pt-4 border-t border-border">
           <div>
             <span className="text-xs text-muted-foreground block">Starting from</span>
-            <span className="text-2xl text-blue-600">{pkg.price}</span>
+            <span className="text-2xl" style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{pkg.price}</span>
             <span className="text-xs text-muted-foreground">/person</span>
           </div>
           <Button 
             onClick={() => handleViewDetails(pkg)}
-            className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
+            className="text-white hover:opacity-90"
+            style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
           >
             View Details
           </Button>
@@ -159,89 +152,94 @@ export function PackagesPage() {
   );
 
   return (
-    <div className="min-h-screen pt-24 pb-12 sm:pb-16">
+    <div className="min-h-screen pt-18 pb-12 sm:pb-16">
       {/* Hero Section */}
-      <div className="relative h-72 sm:h-96 md:h-[450px] lg:h-[500px] mb-8 sm:mb-12 md:mb-16 overflow-hidden rounded-lg sm:rounded-xl md:rounded-2xl">
-        <ImageWithFallback
-          src="/images/luxury-travel-hero.jpg"
-          alt="Packages"
-          className="w-full h-full object-cover object-center scale-110 hover:scale-100 transition-transform duration-700"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
-        <div className="absolute inset-0 flex items-center justify-center text-center">
-          <div className="max-w-3xl px-4 sm:px-6">
-            <h1 className="text-white mb-3 sm:mb-4 text-2xl sm:text-3xl md:text-4xl lg:text-5xl">
-              Our Travel Packages
-            </h1>
-            <p className="text-white/90 text-base sm:text-lg md:text-xl">
-              Carefully curated packages for every type of traveler and budget
-            </p>
+      <section className="">
+        <div className="relative h-72 sm:h-96 md:h-[450px] lg:h-[500px] mb-8 sm:mb-12 md:mb-16 overflow-hidden rounded-b-lg sm:rounded-b-xl md:rounded-b-2xl">
+          <ImageWithFallback
+            src="/images/HeroImage1.jpg"
+            alt="Packages"
+            className="w-full h-full object-cover object-center scale-110 hover:scale-100 transition-transform duration-700"
+          />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+          <div className="absolute inset-0 flex items-center justify-center text-center">
+            <div className="max-w-3xl mx-auto px-4 sm:px-6">
+              <h1 className="text-white mb-3 sm:mb-4" style={{fontSize: '2.5rem', fontWeight: 700, lineHeight: '1.2'}}>
+                Our Travel Packages
+              </h1>
+              <p className="text-white/90 text-base sm:text-lg md:text-xl">
+                Carefully curated packages for every type of traveler and budget
+              </p>
+            </div>
           </div>
         </div>
-      </div>
+      </section>
 
       {/* Packages Content */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6">
-        <Tabs defaultValue="luxury" className="w-full">
-          <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-8 sm:mb-12">
-            <TabsTrigger value="luxury">Luxury Travel</TabsTrigger>
-            <TabsTrigger value="adventure">Adventure</TabsTrigger>
-            <TabsTrigger value="corporate">Corporate</TabsTrigger>
-            <TabsTrigger value="religious">Religious</TabsTrigger>
-          </TabsList>
+      <section className="px-2 md:px-6">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+          <Tabs defaultValue="luxury" className="w-full">
+            <TabsList className="grid w-full grid-cols-2 sm:grid-cols-4 mb-8 sm:mb-12">
+              <TabsTrigger value="luxury">Luxury Travel</TabsTrigger>
+              <TabsTrigger value="adventure">Adventure</TabsTrigger>
+              <TabsTrigger value="corporate">Corporate</TabsTrigger>
+              <TabsTrigger value="religious">Religious</TabsTrigger>
+            </TabsList>
 
-          <TabsContent value="luxury">
-            <div className="grid md:grid-cols-2 gap-8">
-              {packages.luxury.map((pkg, index) => (
-                <PackageCard key={index} pkg={pkg} />
-              ))}
-            </div>
-          </TabsContent>
+            <TabsContent value="luxury">
+              <div className="grid md:grid-cols-2 gap-8">
+                {packages.luxury.map((pkg, index) => (
+                  <PackageCard key={index} pkg={pkg} />
+                ))}
+              </div>
+            </TabsContent>
 
-          <TabsContent value="adventure">
-            <div className="grid md:grid-cols-2 gap-8">
-              {packages.adventure.map((pkg, index) => (
-                <PackageCard key={index} pkg={pkg} />
-              ))}
-            </div>
-          </TabsContent>
+            <TabsContent value="adventure">
+              <div className="grid md:grid-cols-2 gap-8">
+                {packages.adventure.map((pkg, index) => (
+                  <PackageCard key={index} pkg={pkg} />
+                ))}
+              </div>
+            </TabsContent>
 
-          <TabsContent value="corporate">
-            <div className="grid md:grid-cols-2 gap-8">
-              {packages.corporate.map((pkg, index) => (
-                <PackageCard key={index} pkg={pkg} />
-              ))}
-            </div>
-          </TabsContent>
+            <TabsContent value="corporate">
+              <div className="grid md:grid-cols-2 gap-8">
+                {packages.corporate.map((pkg, index) => (
+                  <PackageCard key={index} pkg={pkg} />
+                ))}
+              </div>
+            </TabsContent>
 
-          <TabsContent value="religious">
-            <div className="grid md:grid-cols-2 gap-8">
-              {packages.religious.map((pkg, index) => (
-                <PackageCard key={index} pkg={pkg} />
-              ))}
-            </div>
-          </TabsContent>
-        </Tabs>
+            <TabsContent value="religious">
+              <div className="grid md:grid-cols-2 gap-8">
+                {packages.religious.map((pkg, index) => (
+                  <PackageCard key={index} pkg={pkg} />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
 
-        {/* Custom Package CTA */}
-        <Card className="mt-16 p-12 text-center bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-100">
-          <h2 className="mb-4">Can't Find What You're Looking For?</h2>
-          <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Let us create a custom package tailored to your preferences, budget, and travel dates. 
-            Our expert team will design the perfect itinerary just for you.
-          </p>
-          <Button 
-            size="lg"
-            className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
-            onClick={() => {
-              const element = document.getElementById('contact-section');
-              if (element) element.scrollIntoView({ behavior: 'smooth' });
-            }}
-          >
-            Request Custom Package
-          </Button>
-        </Card>
-      </div>
+          {/* Custom Package CTA */}
+          <Card className="mt-16 p-12 text-center bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-100">
+            <h2 className="mb-4" style={{fontSize: '2rem', fontWeight: 700, lineHeight: '1.3', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>Can't Find What You're Looking For?</h2>
+            <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
+              Let us create a custom package tailored to your preferences, budget, and travel dates. 
+              Our expert team will design the perfect itinerary just for you.
+            </p>
+            <Button 
+              size="lg"
+              className="text-white hover:opacity-90"
+              style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
+              onClick={() => {
+                const element = document.getElementById('contact-section');
+                if (element) element.scrollIntoView({ behavior: 'smooth' });
+              }}
+            >
+              Request Custom Package
+            </Button>
+          </Card>
+        </div>
+      </section>
 
     </div>
   );

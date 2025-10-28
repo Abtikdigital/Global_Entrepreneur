@@ -36,7 +36,7 @@ export function Navigation() {
             <button onClick={() => scrollToSection('contact')} className="text-foreground hover:text-primary transition-colors">
               Contact
             </button>
-            <Button onClick={() => scrollToSection('contact')} style={{ backgroundColor: '#00A86B', color: 'white' }}>
+            <Button onClick={() => scrollToSection('contact')} className="text-white hover:opacity-90" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
               Get Started
             </Button>
           </div>
@@ -66,7 +66,7 @@ export function Navigation() {
               <button onClick={() => scrollToSection('contact')} className="text-foreground hover:text-primary transition-colors text-left">
                 Contact
               </button>
-              <Button onClick={() => scrollToSection('contact')} style={{ backgroundColor: '#00A86B', color: 'white' }}>
+              <Button onClick={() => scrollToSection('contact')} className="text-white hover:opacity-90" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
                 Get Started
               </Button>
             </div>

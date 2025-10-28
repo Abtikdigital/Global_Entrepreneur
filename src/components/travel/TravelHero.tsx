@@ -47,28 +47,28 @@ export function TravelHero() {
           cursor: pointer;
         }
       `}</style>
-      <section className="relative min-h-[600px] sm:min-h-[700px] md:min-h-screen flex items-center justify-center overflow-hidden">
+      <section className="relative px-2 md:px-6 h-[600px] sm:h-[700px] md:h-screen flex items-center justify-center">
       {/* Background Image with Overlay */}
       <div className="absolute inset-0 z-0">
         <ImageWithFallback
-          src="/images/luxury-travel-hero.jpg"
+          src="/images/HeroImage1.jpg"
           alt="Luxury Travel Destination"
           className="w-full h-full object-cover object-center"
         />
-        <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/50 to-black/70"></div>
+        <div className="absolute inset-0 bg-gradient-to-r from-black/40 via-black/40 to-black/40"></div>
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 sm:py-32 md:py-40 text-center">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 py-20 sm:py-32 md:py-40 text-center">
         <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
           <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6 bg-white/10 backdrop-blur-sm border border-white/20">
             <Plane size={16} className="sm:w-[18px] sm:h-[18px] text-white" />
             <span className="text-white text-sm sm:text-base">Your Journey Begins Here</span>
           </div>
           
-          <h1 className="text-white mb-4 sm:mb-6 text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] leading-tight sm:leading-[1.1] px-4 sm:px-0">
+          <h1 className="text-white mb-4 sm:mb-6 px-4 sm:px-0" style={{fontSize: '2.5rem', fontWeight: 700, lineHeight: '1.2'}}>
             Explore the World with <br className="hidden sm:block" />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-cyan-300">
+            <span className="text-transparent bg-clip-text" style={{backgroundImage: 'linear-gradient(to right, #385678, #17947F)'}}>
               Global Pioneers
             </span>
           </h1>
@@ -93,7 +93,7 @@ export function TravelHero() {
                 />
               </div>
               <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background date-input-wrapper">
-                <Calendar size={20} className="text-muted-foreground flex-shrink-0" />
+                <Calendar size={20} className="text-muted-foreground shrink-0" />
                 <Input
                   type="date"
                   value={date}
@@ -103,7 +103,8 @@ export function TravelHero() {
               </div>
               <Button 
                 onClick={handleSearch}
-                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 h-full text-sm sm:text-base whitespace-nowrap"
+                className="bg-gradient-to-r text-white hover:opacity-90 h-full text-sm sm:text-base whitespace-nowrap"
+                style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
               >
                 <Search size={18} className="mr-2" />
                 Search Packages
@@ -116,7 +117,8 @@ export function TravelHero() {
           <Button 
             size="lg"
             onClick={() => scrollToSection('services-section')}
-            className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
+            className="text-white hover:opacity-90"
+            style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
           >
             Explore Our Services
             <ArrowRight className="ml-2" size={20} />

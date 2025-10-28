@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom';
 import { Button } from '../ui/button';
 import { Menu, X, Plane, Phone } from 'lucide-react';
 import { useDialog } from '../../contexts/DialogContext';
+import { ImageWithFallback } from '../figma/ImageWithFallback';
 
 export function TravelNavigation() {
   const location = useLocation();
@@ -43,8 +44,8 @@ export function TravelNavigation() {
           bottom: 0;
           left: 50%;
           width: 0;
-          height: 3px;
-          background: linear-gradient(to right, #2563eb, #06b6d4);
+          height: 2px;
+          background: linear-gradient(to right, #385678, #17947F);
           transition: all 0.3s ease;
           transform: translateX(-50%);
         }
@@ -75,8 +76,8 @@ export function TravelNavigation() {
           }
         }
       `}</style>
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-border shadow-sm animate-[fadeInDown_0.3s_ease-out]">
-        <div className="max-w-7xl mx-auto px-4 md:px-6 lg:px-8 py-3 md:py-4">
+      <nav className="fixed top-0 left-0 px-2 md:px-4 right-0 z-50 shadow-sm animate-[fadeInDown_0.3s_ease-out] bg-white ">
+        <div className="max-w-7xl mx-auto px-4 md:px-10 lg:px-20 py-3 md:py-4">
           <div className="flex items-center justify-between gap-4">
             {/* Logo */}
             <Link 
@@ -84,17 +85,7 @@ export function TravelNavigation() {
               onClick={handleNavigate}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity group flex-shrink-0"
             >
-              <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center group-hover:scale-110 transition-transform">
-                <Plane size={20} className="text-white" />
-              </div>
-              <div className="hidden sm:flex flex-col items-start">
-                <span className="text-base md:text-lg leading-tight" style={{ fontWeight: 700, color: '#1e40af' }}>
-                  GLOBAL PIONEERS
-                </span>
-                <span className="text-xs text-muted-foreground leading-tight">
-                  Tours & Travels
-                </span>
-              </div>
+              <ImageWithFallback src="/images/Logo.jpg" alt="Logo" className="!w-44 !h-16" />
             </Link>
 
             {/* Desktop Navigation - Centered */}
@@ -104,7 +95,8 @@ export function TravelNavigation() {
                   key={item.path}
                   to={item.path}
                   onClick={handleNavigate}
-                  className={`nav-link whitespace-nowrap ${isActive(item.path) ? 'active' : ''}`}
+                  className="nav-link whitespace-nowrap"
+                  style={isActive(item.path) ? {color: '#385678'} : {}}
                 >
                   {item.label}
                 </Link>
@@ -115,14 +107,15 @@ export function TravelNavigation() {
             <div className="hidden md:flex items-center gap-3 flex-shrink-0">
               <a
                 href="tel:+919328100195"
-                className="hidden lg:flex items-center gap-2 text-foreground hover:text-blue-600 transition-colors px-3 whitespace-nowrap"
+                className="hidden lg:flex items-center gap-2 text-foreground hover:opacity-80 transition-colors px-3 whitespace-nowrap"
               >
                 <Phone size={18} />
                 <span>+91 93281 00195</span>
               </a>
               <Button 
                 onClick={() => openDialog({})}
-                className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600 hover:scale-105 transition-transform whitespace-nowrap px-3 py-2 text-sm"
+                className="text-white hover:opacity-90 hover:scale-105 transition-transform whitespace-nowrap px-3 py-2 text-sm"
+                style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
               >
                 Book Now
               </Button>
@@ -146,18 +139,14 @@ export function TravelNavigation() {
                     key={item.path}
                     to={item.path}
                     onClick={handleNavigate}
-                    className={`text-left py-2 px-3 rounded-lg transition-colors ${
-                      isActive(item.path)
-                        ? 'text-blue-600 bg-blue-50'
-                        : 'text-foreground hover:text-blue-600 hover:bg-gray-50'
-                    }`}
+                    className="text-left py-2 px-3 rounded-lg transition-colors text-foreground hover:bg-gray-50"
                   >
                     {item.label}
                   </Link>
                 ))}
                 <a
                   href="tel:+919328100195"
-                  className="flex items-center gap-2 text-foreground hover:text-blue-600 transition-colors py-2 px-3"
+                  className="flex items-center gap-2 text-foreground hover:opacity-80 transition-colors py-2 px-3"
                 >
                   <Phone size={18} />
                   <span>+91 93281 00195</span>
@@ -167,7 +156,8 @@ export function TravelNavigation() {
                     setIsMenuOpen(false);
                     openDialog({});
                   }}
-                  className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:scale-105 transition-transform"
+                  className="text-white hover:opacity-90 hover:scale-105 transition-transform"
+                  style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
                 >
                   Book Now
                 </Button>

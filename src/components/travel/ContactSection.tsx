@@ -34,13 +34,13 @@ export function ContactSection() {
   ];
 
   return (
-    <section id="contact-section" className="py-24 bg-muted/30">
-      <div className="max-w-7xl mx-auto px-6">
-        <div className="text-center mb-16">
-          <div className="inline-block px-4 py-2 rounded-full mb-4 bg-blue-50 text-blue-600">
+    <section id="contact-section" className="py-24   bg-muted/30 px-2 md:px-6">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-20">
+        <div className="text-center mb-12">
+          <div className="inline-block px-4 py-2 rounded-full mb-4 text-white" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
             Get In Touch
           </div>
-          <h2 className="mb-4">Plan Your Dream Journey</h2>
+          <h2 className="mb-4" style={{fontSize: '2rem', fontWeight: 700, lineHeight: '1.3', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>Plan Your Dream Journey</h2>
           <p className="text-muted-foreground max-w-3xl mx-auto">
             Ready to embark on your next adventure? Contact us today and let our travel experts 
             create a personalized itinerary just for you.
@@ -51,21 +51,24 @@ export function ContactSection() {
           {contactInfo.map((info, index) => (
             <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow bg-white">
               <div 
-                className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-600 to-cyan-500 flex items-center justify-center mx-auto mb-4"
+                className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                style={{background: 'linear-gradient(135deg, #385678, #17947F)'}}
               >
                 <info.icon size={24} className="text-white" />
               </div>
-              <h4 className="mb-2">{info.title}</h4>
+              <h4 className="mb-2" style={{fontSize: '1.25rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>{info.title}</h4>
               <a 
                 href={info.link} 
-                className="text-muted-foreground hover:text-blue-600 transition-colors text-sm block"
+                className="hover:opacity-80 transition-colors text-sm block"
+                style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent'}}
               >
                 {info.value}
               </a>
               {info.value2 && (
                 <a 
                   href={`tel:${info.value2.replace(/\s/g, '')}`}
-                  className="text-muted-foreground hover:text-blue-600 transition-colors text-sm block"
+                  className="hover:opacity-80 transition-colors text-sm block"
+                  style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', color: 'transparent'}}
                 >
                   {info.value2}
                 </a>
@@ -75,12 +78,13 @@ export function ContactSection() {
         </div>
 
         <Card className="p-8 max-w-4xl mx-auto bg-white">
-          <h3 className="mb-6 text-center">Send Us Your Travel Requirements</h3>
+          <h3 className="mb-6 text-center" style={{fontSize: '1.5rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>Send Us Your Travel Requirements</h3>
           <div className="text-center">
             <Button 
               onClick={handleInquiry}
               size="lg"
-              className="bg-gradient-to-r from-blue-600 to-cyan-500 text-white hover:from-blue-700 hover:to-cyan-600"
+              className="text-white hover:opacity-90"
+              style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
             >
               Submit Inquiry
               <Send className="ml-2" size={18} />

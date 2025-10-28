@@ -300,7 +300,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           z-index: 9999;
           padding: 20px;
           animation: fadeIn 0.2s ease-in-out;
-          overflow-y: auto;
+        
           overflow-x: hidden;
         }
 

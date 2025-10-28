@@ -9,7 +9,7 @@ export function Layout() {
   const { isOpen, packageDetails, closeDialog } = useDialog();
 
   return (
-    <div className="min-h-screen overflow-x-hidden max-w-full">
+    <div className="min-h-screen overflow-x-hidden ">
       <TravelNavigation />
       <Outlet />
       <TravelFooter />
