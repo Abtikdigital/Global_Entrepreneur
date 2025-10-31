@@ -101,7 +101,7 @@ export function AboutPage() {
               </div>
               <div className="relative h-64 sm:h-80 md:h-96 rounded-xl sm:rounded-2xl overflow-hidden shadow-2xl">
                 <ImageWithFallback
-                  src="/images/luxury-travel-hero.jpg"
+                  src="/images/AboutUs.jpg"
                   alt="Travel Experience"
                   className="w-full h-full object-cover"
                 />
@@ -112,7 +112,12 @@ export function AboutPage() {
           {/* Mission & Vision */}
           <div className="grid md:grid-cols-2 gap-6 sm:gap-8 mb-12 sm:mb-16">
             <Card className="p-8 bg-gradient-to-br from-blue-50 to-cyan-50 border-2 border-blue-100">
-              <Target size={40} style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}} className="mb-4" />
+              <div 
+                className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 shadow-lg"
+                style={{background: 'linear-gradient(135deg, #385678, #17947F)'}}
+              >
+                <Target size={28} className="text-white" />
+              </div>
               <h3 className="mb-3" style={{fontSize: '1.5rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>Our Mission</h3>
               <p className="text-muted-foreground">
                 To provide exceptional, personalized travel experiences that inspire, delight, and 
@@ -121,7 +126,12 @@ export function AboutPage() {
               </p>
             </Card>
             <Card className="p-8 bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-cyan-100">
-              <Eye size={40} className="text-cyan-600 mb-4" />
+              <div 
+                className="w-14 h-14 rounded-xl flex items-center justify-center mb-4 shadow-lg"
+                style={{background: 'linear-gradient(135deg, #385678, #17947F)'}}
+              >
+                <Eye size={28} className="text-white" />
+              </div>
               <h3 className="mb-3" style={{fontSize: '1.5rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>Our Vision</h3>
               <p className="text-muted-foreground">
                 To become India's most trusted and preferred travel partner, known for excellence 
@@ -142,7 +152,7 @@ export function AboutPage() {
             <div className="grid md:grid-cols-4 gap-6">
               {values.map((value, index) => (
                 <Card key={index} className="p-6 text-center hover:shadow-lg transition-shadow">
-                  <div className="w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4" style={{background: 'linear-gradient(135deg, #385678, #17947F)'}}>
+                  <div className="w-14 h-14 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg" style={{background: 'linear-gradient(135deg, #385678, #17947F)'}}>
                     <value.icon size={28} className="text-white" />
                   </div>
                   <h4 className="mb-2" style={{fontSize: '1.25rem', fontWeight: 600, lineHeight: '1.4', background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text'}}>{value.title}</h4>
