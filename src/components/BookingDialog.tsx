@@ -1,5 +1,5 @@
-import React, { useEffect } from 'react';
-import { Calendar, Star, X, Loader2 } from 'lucide-react';
+import React, { useEffect, useState, useMemo } from 'react';
+import { Calendar, Star, X, Loader2, User, Phone, Mail, Users, MapPin, DollarSign, Hotel, FileText, Plane, Package } from 'lucide-react';
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { useForm } from 'react-hook-form';
@@ -14,6 +14,9 @@ interface PackageDetails {
   includes?: string[];
   destination?: string;
   date?: string;
+  flightFrom?: string;
+  flightTo?: string;
+  flightDate?: string;
 }
 
 interface BookingDialogProps {
@@ -23,6 +26,7 @@ interface BookingDialogProps {
 }
 
 interface FormData {
+  // Common
   name: string;
   phone: string;
   email: string;
@@ -31,15 +35,31 @@ interface FormData {
   budget: string;
   date: string;
   tourDetails: string;
+  tripType?: 'domestic' | 'international';
+  // Flight
+  flightFrom?: string;
+  flightTo?: string;
+  flightBudget?: string;
+  flightDate?: string;
+  // Hotels
+  hotelLocation?: string;
+  hotelCheckIn?: string;
+  hotelCheckOut?: string;
+  hotelRooms?: string;
+  hotelAdults?: string;
+  hotelBudget?: string;
 }
 
 export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialogProps) {
+  const [activeTab, setActiveTab] = useState<'package' | 'flight' | 'hotels'>('package');
+
   const {
     register,
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
     setValue,
+    watch,
   } = useForm<FormData>({
     defaultValues: {
       name: '',
@@ -50,62 +70,200 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
       budget: '',
       date: '',
       tourDetails: '',
+      tripType: 'domestic',
+      // flight
+      flightFrom: '',
+      flightTo: '',
+      flightBudget: '',
+      flightDate: '',
+      // hotels
+      hotelLocation: '',
+      hotelCheckIn: '',
+      hotelCheckOut: '',
+      hotelRooms: '',
+      hotelAdults: '',
+      hotelBudget: '',
     },
   });
+
+  const tripType = watch('tripType');
+  const destination = watch('destination');
+  const date = watch('date');
+  const flightTo = watch('flightTo');
+  const flightDate = watch('flightDate');
+  const persons = watch('persons');
+
+  // Sync destination between package and flight tabs (bidirectional)
+  useEffect(() => {
+    if (destination !== flightTo) {
+      if (activeTab === 'package' && destination) {
+        setValue('flightTo', destination, { shouldDirty: false });
+      } else if (activeTab === 'flight' && flightTo) {
+        setValue('destination', flightTo, { shouldDirty: false });
+      }
+    }
+  }, [destination, flightTo, activeTab, setValue]);
+
+  // Sync date between package and flight tabs (bidirectional)
+  useEffect(() => {
+    if (date !== flightDate) {
+      if (activeTab === 'package' && date) {
+        setValue('flightDate', date, { shouldDirty: false });
+      } else if (activeTab === 'flight' && flightDate) {
+        setValue('date', flightDate, { shouldDirty: false });
+      }
+    }
+  }, [date, flightDate, activeTab, setValue]);
+
+  // Comprehensive suggestion lists with states, districts, and countries
+  const domesticSuggestions = useMemo(() => [
+    // Cities with States
+    'Mumbai, Maharashtra', 'Delhi, Delhi', 'Ahmedabad, Gujarat', 'Goa, Goa',
+    'Jaipur, Rajasthan', 'Udaipur, Rajasthan', 'Jodhpur, Rajasthan', 'Pushkar, Rajasthan',
+    'Manali, Himachal Pradesh', 'Shimla, Himachal Pradesh', 'Dharamshala, Himachal Pradesh',
+    'Kerala, Kerala', 'Kochi, Kerala', 'Munnar, Kerala', 'Alleppey, Kerala', 'Thekkady, Kerala',
+    'Varanasi, Uttar Pradesh', 'Agra, Uttar Pradesh', 'Lucknow, Uttar Pradesh', 'Mathura, Uttar Pradesh',
+    'Bangalore, Karnataka', 'Mysore, Karnataka', 'Coorg, Karnataka',
+    'Chennai, Tamil Nadu', 'Madurai, Tamil Nadu', 'Ooty, Tamil Nadu', 'Kodaikanal, Tamil Nadu',
+    'Hyderabad, Telangana', 'Warangal, Telangana',
+    'Kolkata, West Bengal', 'Darjeeling, West Bengal', 'Sikkim',
+    'Pune, Maharashtra', 'Nagpur, Maharashtra', 'Aurangabad, Maharashtra',
+    'Amritsar, Punjab', 'Chandigarh, Punjab',
+    'Dehradun, Uttarakhand', 'Rishikesh, Uttarakhand', 'Haridwar, Uttarakhand', 'Mussoorie, Uttarakhand',
+    'Gangtok, Sikkim', 'Nainital, Uttarakhand',
+    'Pondicherry, Puducherry', 'Mahabalipuram, Tamil Nadu',
+    'Khajuraho, Madhya Pradesh', 'Bhopal, Madhya Pradesh',
+    'Mysore, Karnataka', 'Hampi, Karnataka',
+    // Districts
+    'Agra District, Uttar Pradesh', 'Rishikesh District, Uttarakhand', 'Manali District, Himachal Pradesh',
+    // States
+    'Maharashtra', 'Gujarat', 'Rajasthan', 'Kerala', 'Tamil Nadu', 'Karnataka', 'Goa', 'Himachal Pradesh',
+    'Uttarakhand', 'Uttar Pradesh', 'West Bengal', 'Punjab', 'Sikkim'
+  ], []);
+
+  const internationalSuggestions = useMemo(() => [
+    // UAE
+    'Dubai, UAE', 'Abu Dhabi, UAE', 'Sharjah, UAE',
+    // Thailand
+    'Bangkok, Thailand', 'Phuket, Thailand', 'Pattaya, Thailand', 'Chiang Mai, Thailand', 'Krabi, Thailand',
+    // Maldives
+    'Male, Maldives', 'Malé Atoll, Maldives',
+    // Europe
+    'Paris, France', 'Rome, Italy', 'London, UK', 'Barcelona, Spain', 'Amsterdam, Netherlands',
+    'Vienna, Austria', 'Prague, Czech Republic', 'Berlin, Germany', 'Munich, Germany',
+    'Venice, Italy', 'Florence, Italy', 'Milan, Italy', 'Zurich, Switzerland',
+    'Interlaken, Switzerland', 'Grindelwald, Switzerland',
+    // Southeast Asia
+    'Singapore, Singapore', 'Bali, Indonesia', 'Jakarta, Indonesia', 'Vietnam',
+    'Ho Chi Minh City, Vietnam', 'Hanoi, Vietnam', 'Hoi An, Vietnam', 'Da Nang, Vietnam',
+    'Phnom Penh, Cambodia', 'Siem Reap, Cambodia',
+    'Bangkok, Thailand', 'Chiang Rai, Thailand',
+    // Others
+    'Tokyo, Japan', 'Osaka, Japan', 'Seoul, South Korea', 'Hong Kong, China',
+    'Sydney, Australia', 'Melbourne, Australia', 'Auckland, New Zealand',
+    'New York, USA', 'Los Angeles, USA', 'San Francisco, USA',
+    'Toronto, Canada', 'Vancouver, Canada',
+    'Istanbul, Turkey', 'Cairo, Egypt', 'Dubai, United Arab Emirates'
+  ], []);
+
+  const suggestionList = tripType === 'international' ? internationalSuggestions : domesticSuggestions;
 
   // Update form when packageDetails changes
   useEffect(() => {
     if (packageDetails) {
+      // Handle package destination and date
       if (packageDetails.destination) {
         setValue('destination', packageDetails.destination);
+        setValue('flightTo', packageDetails.destination); // Sync to flight tab
       }
       if (packageDetails.date) {
         setValue('date', packageDetails.date);
+        setValue('flightDate', packageDetails.date); // Sync to flight tab
+      }
+      // Handle flight data from hero section
+      if (packageDetails.flightFrom || packageDetails.flightTo) {
+        setActiveTab('flight');
+        if (packageDetails.flightFrom) setValue('flightFrom', packageDetails.flightFrom);
+        if (packageDetails.flightTo) {
+          setValue('flightTo', packageDetails.flightTo);
+          setValue('destination', packageDetails.flightTo); // Sync to package tab
+        }
+        if (packageDetails.flightDate) {
+          setValue('flightDate', packageDetails.flightDate);
+          setValue('date', packageDetails.flightDate); // Sync to package tab
+        }
       }
     }
   }, [packageDetails, setValue]);
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await axios.post('/api/booking', {
+      const type = activeTab;
+      const payload: any = {
+        type,
+        tripType: data.tripType,
         name: data.name,
         phone: data.phone,
         email: data.email,
-        persons: data.persons,
-        destination: data.destination,
-        budget: data.budget,
-        date: data.date,
-        tourDetails: data.tourDetails,
-        packageName: packageDetails?.name,
-        packagePrice: packageDetails?.price,
-        packageDuration: packageDetails?.duration,
-      });
+      };
 
+      if (type === 'package') {
+        Object.assign(payload, {
+          persons: data.persons,
+          destination: data.destination,
+          budget: data.budget,
+          date: data.date,
+          tourDetails: data.tourDetails,
+          packageName: packageDetails?.name,
+          packagePrice: packageDetails?.price,
+          packageDuration: packageDetails?.duration,
+        });
+      }
+
+      if (type === 'flight') {
+        Object.assign(payload, {
+          from: data.flightFrom,
+          to: data.flightTo,
+          date: data.flightDate,
+          persons: data.persons,
+          budget: data.flightBudget,
+        });
+      }
+
+      if (type === 'hotels') {
+        Object.assign(payload, {
+          location: data.hotelLocation,
+          checkIn: data.hotelCheckIn,
+          checkOut: data.hotelCheckOut,
+          rooms: data.hotelRooms,
+          adults: data.hotelAdults,
+          budget: data.hotelBudget,
+        });
+      }
+
+      const response = await axios.post('/api/booking', payload);
       const result = response.data;
 
       if (result.isSuccess) {
         await Swal.fire({
           icon: 'success',
-          title: 'Booking Submitted Successfully!',
+          title: 'Submitted Successfully!',
           text: 'Thank you for your interest. We will contact you within 24 hours.',
           confirmButtonColor: '#2563eb',
           confirmButtonText: 'OK',
         });
         handleClose();
       } else {
-        throw new Error(result.message || 'Failed to submit booking');
+        throw new Error(result.message || 'Failed to submit');
       }
     } catch (error: any) {
       console.error('Booking submission error:', error);
-      
-      let errorMessage = 'There was an error submitting your booking. Please try again later or contact us directly.';
-      
+      let errorMessage = 'There was an error submitting your request. Please try again later or contact us directly.';
       if (error.response?.data?.message) {
         errorMessage = error.response.data.message;
       } else if (error.message) {
         errorMessage = error.message;
       }
-      
       await Swal.fire({
         icon: 'error',
         title: 'Submission Failed',
@@ -128,22 +286,63 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
   return (
     <div className="custom-dialog-overlay" onClick={handleClose}>
       <div className="custom-dialog-content" onClick={(e) => e.stopPropagation()}>
-        <div className="custom-dialog-header rounded-t-xl">
-          <h2>Plan Your Future Journey</h2>
-          <button className="custom-dialog-close" onClick={handleClose}>
+        <div className="custom-dialog-header rounded-t-xl" style={{background: 'linear-gradient(to right, #385678, #17947F)'}}>
+          <h2 style={{color: 'white'}}>Plan Your Future Journey</h2>
+          <button className="custom-dialog-close" onClick={handleClose} style={{color: 'white'}}>
             <X size={24} />
           </button>
         </div>
 
         <div className="custom-dialog-body">
-          {packageDetails && packageDetails.name && (
+          {/* Tabs */}
+          <div className="px-6 pt-6">
+            <div className="inline-flex rounded-lg border border-gray-200 overflow-hidden">
+              <button
+                type="button"
+                onClick={() => setActiveTab('package')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm transition-colors ${
+                  activeTab === 'package' 
+                    ? 'bg-gray-100 font-semibold text-gray-900' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Package size={16} />
+                Package
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('flight')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm border-l border-gray-200 transition-colors ${
+                  activeTab === 'flight' 
+                    ? 'bg-gray-100 font-semibold text-gray-900' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Plane size={16} />
+                Flight
+              </button>
+              <button
+                type="button"
+                onClick={() => setActiveTab('hotels')}
+                className={`flex items-center gap-2 px-4 py-2 text-sm border-l border-gray-200 transition-colors ${
+                  activeTab === 'hotels' 
+                    ? 'bg-gray-100 font-semibold text-gray-900' 
+                    : 'bg-white text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                <Hotel size={16} />
+                Hotels
+              </button>
+            </div>
+          </div>
+
+          {packageDetails && packageDetails.name && activeTab === 'package' && (
             <div className="custom-package-info">
               {packageDetails.image && (
                 <div className="custom-package-image">
                   <img src={packageDetails.image} alt={packageDetails.name || 'Package'} />
                 </div>
               )}
-              
               <h3>{packageDetails.name}</h3>
               {packageDetails.duration && (
                 <p>
@@ -154,7 +353,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                 <div className="custom-package-price">
                   <span>{packageDetails.price}</span>
                   <span>/person</span>
-            </div>
+                </div>
               )}
               {packageDetails.highlights && (
                 <div className="custom-package-section">
@@ -162,25 +361,26 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                     <Star size={16} className="inline" /> Highlights
                   </p>
                   <p>{packageDetails.highlights}</p>
-            </div>
+                </div>
               )}
               {packageDetails.includes && packageDetails.includes.length > 0 && (
                 <div className="custom-package-section">
                   <p>Package Includes:</p>
                   <div className="custom-includes-grid">
-                {packageDetails.includes.map((item, idx) => (
+                    {packageDetails.includes.map((item, idx) => (
                       <div key={idx} className="custom-include-item">
                         <span>✓</span>
-                    <span>{item}</span>
+                        <span>{item}</span>
+                      </div>
+                    ))}
                   </div>
-                ))}
-              </div>
-            </div>
+                </div>
               )}
-          </div>
-        )}
+            </div>
+          )}
 
           <form onSubmit={handleSubmit(onSubmit)} className="custom-booking-form">
+            {/* Common fields */}
             <div className="custom-form-row">
               <div className="custom-form-group">
                 <label>Full Name *</label>
@@ -192,6 +392,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                     minLength: { value: 2, message: 'Name must be at least 2 characters' }
                   })}
                   className={errors.name ? 'error-input' : ''}
+                  autoComplete="name"
                 />
                 {errors.name && <span className="error-message">{errors.name.message}</span>}
               </div>
@@ -208,6 +409,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                     }
                   })}
                   className={errors.phone ? 'error-input' : ''}
+                  autoComplete="tel"
                 />
                 {errors.phone && <span className="error-message">{errors.phone.message}</span>}
               </div>
@@ -226,48 +428,153 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                   }
                 })}
                 className={errors.email ? 'error-input' : ''}
+                autoComplete="email"
               />
               {errors.email && <span className="error-message">{errors.email.message}</span>}
             </div>
 
-            <div className="custom-form-row">
-              <div className="custom-form-group">
-                <label>Number of Persons *</label>
-                <input 
-                  type="number" 
-                  placeholder="Enter number of persons" 
-                  {...register('persons', { 
-                    required: 'Number of persons is required',
-                    min: { value: 1, message: 'Please enter at least 1 person' }
-                  })} 
-                  min="1"
-                  className={errors.persons ? 'error-input' : ''}
-                />
-                {errors.persons && <span className="error-message">{errors.persons.message}</span>}
-              </div>
-              <div className="custom-form-group">
-                <label>Destination</label>
-                <input type="text" placeholder="Enter destination" {...register('destination')} />
-              </div>
-            </div>
-
-            <div className="custom-form-row">
-              <div className="custom-form-group">
-                <label>Budget Per Person</label>
-                <input type="text" placeholder="Enter budget per person" {...register('budget')} />
-              </div>
-              <div className="custom-form-group">
-                <label>Preferred Travel Date</label>
-                <div className="custom-date-wrapper">
-                  <input type="date" {...register('date')} className="custom-date-input" />
-                </div>
-              </div>
-            </div>
-
+            {/* Trip type selector */}
             <div className="custom-form-group">
-              <label>Tour Related Details</label>
-              <textarea placeholder="Any special requirements or tour related details..." rows={4} {...register('tourDetails')} />
+              <label>Trip Type</label>
+              <select {...register('tripType')}>
+                <option value="domestic">National (Domestic)</option>
+                <option value="international">International</option>
+              </select>
             </div>
+
+            {/* Tab-specific fields */}
+            {activeTab === 'package' && (
+              <>
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>Number of Persons *</label>
+                    <input 
+                      type="number" 
+                      placeholder="Enter number of persons" 
+                      {...register('persons', { 
+                        required: 'Number of persons is required',
+                        min: { value: 1, message: 'Please enter at least 1 person' }
+                      })} 
+                      min="1"
+                      className={errors.persons ? 'error-input' : ''}
+                    />
+                    {errors.persons && <span className="error-message">{errors.persons.message}</span>}
+                  </div>
+                  <div className="custom-form-group">
+                    <label>Destination</label>
+                    <input type="text" placeholder="Enter destination" list="destination-suggestions" {...register('destination')} />
+                    <datalist id="destination-suggestions">
+                      {suggestionList.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </div>
+                </div>
+
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>Budget Per Person</label>
+                    <input type="text" placeholder="Enter budget per person" {...register('budget')} />
+                  </div>
+                  <div className="custom-form-group">
+                    <label>Preferred Travel Date</label>
+                    <div className="custom-date-wrapper">
+                      <input type="date" {...register('date')} className="custom-date-input" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="custom-form-group">
+                  <label>Tour Related Details</label>
+                  <textarea placeholder="Any special requirements or tour related details..." rows={4} {...register('tourDetails')} />
+                </div>
+              </>
+            )}
+
+            {activeTab === 'flight' && (
+              <>
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>From *</label>
+                    <input type="text" placeholder="Source city/airport" list="from-suggestions" {...register('flightFrom', { required: 'From is required' })} />
+                    <datalist id="from-suggestions">
+                      {suggestionList.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </div>
+                  <div className="custom-form-group">
+                    <label>To *</label>
+                    <input type="text" placeholder="Destination city/airport" list="to-suggestions" {...register('flightTo', { required: 'To is required' })} />
+                    <datalist id="to-suggestions">
+                      {suggestionList.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </div>
+                </div>
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>Travel Date *</label>
+                    <div className="custom-date-wrapper">
+                      <input type="date" {...register('flightDate', { required: 'Travel date is required' })} className="custom-date-input" />
+                    </div>
+                  </div>
+                  <div className="custom-form-group">
+                    <label>Passengers *</label>
+                    <input type="number" min="1" placeholder="Total passengers" {...register('persons', { required: 'Passengers is required' })} />
+                  </div>
+                </div>
+                <div className="custom-form-group">
+                  <label>Budget</label>
+                  <input type="text" placeholder="Overall budget" {...register('flightBudget')} />
+                </div>
+              </>
+            )}
+
+            {activeTab === 'hotels' && (
+              <>
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>Location *</label>
+                    <input type="text" placeholder="City / Area" list="hotel-suggestions" {...register('hotelLocation', { required: 'Location is required' })} />
+                    <datalist id="hotel-suggestions">
+                      {suggestionList.map((s) => (
+                        <option key={s} value={s} />
+                      ))}
+                    </datalist>
+                  </div>
+                  <div className="custom-form-group">
+                    <label>Rooms *</label>
+                    <input type="number" min="1" placeholder="Number of rooms" {...register('hotelRooms', { required: 'Rooms is required' })} />
+                  </div>
+                </div>
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>Check-in *</label>
+                    <div className="custom-date-wrapper">
+                      <input type="date" {...register('hotelCheckIn', { required: 'Check-in is required' })} className="custom-date-input" />
+                    </div>
+                  </div>
+                  <div className="custom-form-group">
+                    <label>Check-out *</label>
+                    <div className="custom-date-wrapper">
+                      <input type="date" {...register('hotelCheckOut', { required: 'Check-out is required' })} className="custom-date-input" />
+                    </div>
+                  </div>
+                </div>
+                <div className="custom-form-row">
+                  <div className="custom-form-group">
+                    <label>Adults *</label>
+                    <input type="number" min="1" placeholder="Number of adults" {...register('hotelAdults', { required: 'Adults is required' })} />
+                  </div>
+                  <div className="custom-form-group">
+                    <label>Budget</label>
+                    <input type="text" placeholder="Overall budget" {...register('hotelBudget')} />
+                  </div>
+                </div>
+              </>
+            )}
 
             <div className="custom-form-actions">
               <button type="button" onClick={handleClose} className="custom-btn-cancel" disabled={isSubmitting}>Cancel</button>
@@ -278,7 +585,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                     Submitting...
                   </>
                 ) : (
-                  'Submit Booking'
+                  'Submit'
                 )}
               </button>
             </div>
@@ -300,7 +607,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           z-index: 9999;
           padding: 20px;
           animation: fadeIn 0.2s ease-in-out;
-        
+          
           overflow-x: hidden;
         }
 
@@ -333,24 +640,23 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           justify-content: space-between;
           align-items: center;
           padding: 24px;
-          border-bottom: 1px solid #e5e7eb;
+          border-bottom: 1px solid rgba(255, 255, 255, 0.2);
           position: sticky;
           top: 0;
-          background: white;
           z-index: 10;
         }
 
         .custom-dialog-header h2 {
           font-size: 24px;
           font-weight: bold;
-          color: #111827;
+          color: white;
           margin: 0;
         }
 
         .custom-dialog-close {
           background: none;
           border: none;
-          color: #6b7280;
+          color: white;
           cursor: pointer;
           padding: 0;
           width: 32px;
@@ -358,11 +664,13 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           display: flex;
           align-items: center;
           justify-content: center;
-          transition: color 0.2s;
+          transition: all 0.2s;
+          border-radius: 4px;
         }
 
         .custom-dialog-close:hover {
-          color: #111827;
+          background: rgba(255, 255, 255, 0.2);
+          color: white;
         }
 
         .custom-dialog-body {
@@ -509,7 +817,8 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
         }
 
         .custom-form-group input,
-        .custom-form-group textarea {
+        .custom-form-group textarea,
+        .custom-form-group select {
           width: 100%;
           padding: 10px 12px;
           border: 2px solid #d1d5db;
@@ -517,10 +826,12 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           font-size: 14px;
           transition: border-color 0.2s;
           cursor: pointer;
+          background-color: white;
         }
 
         .custom-form-group input:focus,
-        .custom-form-group textarea:focus {
+        .custom-form-group textarea:focus,
+        .custom-form-group select:focus {
           outline: none;
           border-color: #2563eb;
           box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
@@ -592,14 +903,14 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
         }
 
         .custom-btn-submit {
-          background: linear-gradient(to right, #2563eb, #06b6d4);
+          background: linear-gradient(to right, #385678, #17947F);
           border: none;
           color: white;
         }
 
         .custom-btn-submit:hover:not(:disabled) {
-          background: linear-gradient(to right, #1e40af, #0891b2);
-          box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+          background: linear-gradient(to right, #2e465e, #128a79);
+          box-shadow: 0 4px 12px rgba(56, 86, 120, 0.4);
         }
         
         .custom-btn-submit:disabled,

@@ -1,0 +1,80 @@
+{
+  "countries": [
+    {
+      "name": "India",
+      "states": [
+        { "name": "Maharashtra", "cities": ["Mumbai", "Pune", "Nagpur", "Aurangabad"] },
+        { "name": "Delhi", "cities": ["New Delhi"] },
+        { "name": "Gujarat", "cities": ["Ahmedabad", "Surat", "Vadodara"] },
+        { "name": "Rajasthan", "cities": ["Jaipur", "Udaipur", "Jodhpur", "Pushkar"] },
+        { "name": "Himachal Pradesh", "cities": ["Manali", "Shimla", "Dharamshala"] },
+        { "name": "Kerala", "cities": ["Kochi", "Munnar", "Alleppey", "Thekkady"] },
+        { "name": "Uttar Pradesh", "cities": ["Varanasi", "Agra", "Lucknow", "Mathura"] },
+        { "name": "Karnataka", "cities": ["Bengaluru", "Mysuru", "Coorg", "Hampi"] },
+        { "name": "Tamil Nadu", "cities": ["Chennai", "Madurai", "Ooty", "Kodaikanal"] },
+        { "name": "Goa", "cities": ["Panaji", "Calangute", "Baga"] },
+        { "name": "Telangana", "cities": ["Hyderabad", "Warangal"] },
+        { "name": "West Bengal", "cities": ["Kolkata", "Darjeeling"] },
+        { "name": "Uttarakhand", "cities": ["Dehradun", "Rishikesh", "Haridwar", "Mussoorie", "Nainital"] }
+      ]
+    },
+    {
+      "name": "United Arab Emirates",
+      "states": [
+        { "name": "Dubai", "cities": ["Dubai"] },
+        { "name": "Abu Dhabi", "cities": ["Abu Dhabi"] },
+        { "name": "Sharjah", "cities": ["Sharjah"] }
+      ]
+    },
+    {
+      "name": "Thailand",
+      "states": [
+        { "name": "Bangkok", "cities": ["Bangkok"] },
+        { "name": "Phuket", "cities": ["Phuket"] },
+        { "name": "Chiang Mai", "cities": ["Chiang Mai"] },
+        { "name": "Krabi", "cities": ["Krabi"] }
+      ]
+    },
+    {
+      "name": "Maldives",
+      "states": [
+        { "name": "Kaafu Atoll", "cities": ["Male"] }
+      ]
+    },
+    {
+      "name": "France",
+      "states": [
+        { "name": "Île-de-France", "cities": ["Paris"] }
+      ]
+    },
+    {
+      "name": "Italy",
+      "states": [
+        { "name": "Lazio", "cities": ["Rome"] },
+        { "name": "Veneto", "cities": ["Venice"] },
+        { "name": "Tuscany", "cities": ["Florence"] },
+        { "name": "Lombardy", "cities": ["Milan"] }
+      ]
+    },
+    {
+      "name": "United Kingdom",
+      "states": [
+        { "name": "England", "cities": ["London"] }
+      ]
+    },
+    {
+      "name": "Singapore",
+      "states": [
+        { "name": "Singapore", "cities": ["Singapore"] }
+      ]
+    },
+    {
+      "name": "Indonesia",
+      "states": [
+        { "name": "Bali", "cities": ["Denpasar", "Ubud"] }
+      ]
+    }
+  ]
+}
+
+

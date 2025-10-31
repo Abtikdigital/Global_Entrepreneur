@@ -27,23 +27,37 @@ const dbConnection = async () => {
   }
 };
 
-// MONGODB SCHEMA
-const bookingSchema = new mongoose.Schema(
+// Common fields schema
+const commonFields = {
+  name: {
+    type: String,
+    required: [true, "* Full Name is required"],
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: [true, "* Email is required"],
+    lowercase: true,
+    trim: true,
+  },
+  phone: {
+    type: String,
+    required: [true, "* Phone is required"],
+  },
+  tripType: {
+    type: String,
+    enum: ['domestic', 'international'],
+    default: 'domestic',
+  },
+};
+
+// Package Booking Schema
+const packageBookingSchema = new mongoose.Schema(
   {
-    name: {
+    ...commonFields,
+    type: {
       type: String,
-      required: [true, "* Full Name is required"],
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, "* Email is required"],
-      lowercase: true,
-      trim: true,
-    },
-    phone: {
-      type: String,
-      required: [true, "* Phone is required"],
+      default: 'package',
     },
     persons: {
       type: Number,
@@ -81,12 +95,92 @@ const bookingSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// MONGODB MODELS
-const BookingModel =
-  mongoose.models.bookingModel || mongoose.model("bookingModel", bookingSchema);
+// Flight Booking Schema
+const flightBookingSchema = new mongoose.Schema(
+  {
+    ...commonFields,
+    type: {
+      type: String,
+      default: 'flight',
+    },
+    from: {
+      type: String,
+      required: [true, "* From (Source) is required"],
+      trim: true,
+    },
+    to: {
+      type: String,
+      required: [true, "* To (Destination) is required"],
+      trim: true,
+    },
+    date: {
+      type: String,
+      required: [true, "* Travel date is required"],
+      trim: true,
+    },
+    persons: {
+      type: Number,
+      required: [true, "* Passengers is required"],
+    },
+    budget: {
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
 
-// VALIDATION SCHEMA
-const bookingValidationSchema = joi.object({
+// Hotels Booking Schema
+const hotelsBookingSchema = new mongoose.Schema(
+  {
+    ...commonFields,
+    type: {
+      type: String,
+      default: 'hotels',
+    },
+    location: {
+      type: String,
+      required: [true, "* Location is required"],
+      trim: true,
+    },
+    checkIn: {
+      type: String,
+      required: [true, "* Check-in date is required"],
+      trim: true,
+    },
+    checkOut: {
+      type: String,
+      required: [true, "* Check-out date is required"],
+      trim: true,
+    },
+    rooms: {
+      type: Number,
+      required: [true, "* Number of rooms is required"],
+    },
+    adults: {
+      type: Number,
+      required: [true, "* Number of adults is required"],
+    },
+    budget: {
+      type: String,
+      trim: true,
+    },
+  },
+  { timestamps: true }
+);
+
+// MONGODB MODELS
+const PackageBookingModel =
+  mongoose.models.packageBooking || mongoose.model("packageBooking", packageBookingSchema);
+
+const FlightBookingModel =
+  mongoose.models.flightBooking || mongoose.model("flightBooking", flightBookingSchema);
+
+const HotelsBookingModel =
+  mongoose.models.hotelsBooking || mongoose.model("hotelsBooking", hotelsBookingSchema);
+
+// Common validation fields
+const commonValidation = {
   name: joi.string().required().messages({
     "string.base": "* Name Must Be String",
     "string.required": "* Name Is Required",
@@ -95,14 +189,17 @@ const bookingValidationSchema = joi.object({
     "string.base": "* Phone Must Be String",
     "string.required": "* Phone Is Required",
   }),
-  email: joi
-    .string()
-    .email({ tlds: { allow: false } })
-    .required()
-    .messages({
-      "string.base": "* Email Must Be String",
-      "string.required": "* Email is required",
-    }),
+  email: joi.string().email({ tlds: { allow: false } }).required().messages({
+    "string.base": "* Email Must Be String",
+    "string.required": "* Email is required",
+  }),
+  tripType: joi.string().valid('domestic', 'international').optional(),
+};
+
+// Package Validation Schema
+const packageValidationSchema = joi.object({
+  ...commonValidation,
+  type: joi.string().valid('package').optional(),
   persons: joi.number().min(1).required().messages({
     "number.base": "* Number of persons Must Be Number",
     "number.min": "* Please enter at least 1 person",
@@ -115,6 +212,59 @@ const bookingValidationSchema = joi.object({
   packageName: joi.string().allow('').optional(),
   packagePrice: joi.string().allow('').optional(),
   packageDuration: joi.string().allow('').optional(),
+});
+
+// Flight Validation Schema
+const flightValidationSchema = joi.object({
+  ...commonValidation,
+  type: joi.string().valid('flight').optional(),
+  from: joi.string().required().messages({
+    "string.base": "* From (Source) Must Be String",
+    "string.required": "* From (Source) Is Required",
+  }),
+  to: joi.string().required().messages({
+    "string.base": "* To (Destination) Must Be String",
+    "string.required": "* To (Destination) Is Required",
+  }),
+  date: joi.string().required().messages({
+    "string.base": "* Travel Date Must Be String",
+    "string.required": "* Travel Date Is Required",
+  }),
+  persons: joi.number().min(1).required().messages({
+    "number.base": "* Passengers Must Be Number",
+    "number.min": "* Please enter at least 1 passenger",
+    "any.required": "* Passengers is required",
+  }),
+  budget: joi.string().allow('').optional(),
+});
+
+// Hotels Validation Schema
+const hotelsValidationSchema = joi.object({
+  ...commonValidation,
+  type: joi.string().valid('hotels').optional(),
+  location: joi.string().required().messages({
+    "string.base": "* Location Must Be String",
+    "string.required": "* Location Is Required",
+  }),
+  checkIn: joi.string().required().messages({
+    "string.base": "* Check-in Date Must Be String",
+    "string.required": "* Check-in Date Is Required",
+  }),
+  checkOut: joi.string().required().messages({
+    "string.base": "* Check-out Date Must Be String",
+    "string.required": "* Check-out Date Is Required",
+  }),
+  rooms: joi.number().min(1).required().messages({
+    "number.base": "* Rooms Must Be Number",
+    "number.min": "* Please enter at least 1 room",
+    "any.required": "* Rooms is required",
+  }),
+  adults: joi.number().min(1).required().messages({
+    "number.base": "* Adults Must Be Number",
+    "number.min": "* Please enter at least 1 adult",
+    "any.required": "* Adults is required",
+  }),
+  budget: joi.string().allow('').optional(),
 });
 
 // TRANSPORTER
@@ -145,8 +295,8 @@ const sendMail = async (from, to, subject, template) => {
 };
 
 // Firm Template (for Global Pioneers team)
-const firmTemplate = (data) => {
-  let { name, email, phone, persons, destination, budget, date, tourDetails, packageName, packagePrice, packageDuration } = data;
+const firmTemplate = (data, type) => {
+  let { name, email, phone, persons, destination, budget, date, tourDetails, packageName, packagePrice, packageDuration, from, to, location, checkIn, checkOut, rooms, adults, tripType } = data;
 
   return `
     <!DOCTYPE html>
@@ -279,10 +429,13 @@ const firmTemplate = (data) => {
             <h2>📧 New Booking Inquiry</h2>
             <p class="highlight">You have received a new booking inquiry with the following details:</p>
             <table>
+              <tr><th>Booking Type</th><td>${type === 'package' ? '📦 Package' : type === 'flight' ? '✈️ Flight' : '🏨 Hotels'}</td></tr>
+              <tr><th>Trip Type</th><td>${tripType === 'international' ? 'International' : 'National (Domestic)'}</td></tr>
               <tr><th>Full Name</th><td>${name}</td></tr>
               <tr><th>Email</th><td><a href="mailto:${email}">${email}</a></td></tr>
               <tr><th>Phone Number</th><td><a href="tel:+91${phone}">${phone}</a></td></tr>
-              <tr><th>Number of Persons</th><td>${persons}</td></tr>
+              ${type === 'package' ? `
+              ${persons ? `<tr><th>Number of Persons</th><td>${persons}</td></tr>` : ''}
               ${destination ? `<tr><th>Destination</th><td>${destination}</td></tr>` : ''}
               ${budget ? `<tr><th>Budget Per Person</th><td>${budget}</td></tr>` : ''}
               ${date ? `<tr><th>Preferred Travel Date</th><td>${date}</td></tr>` : ''}
@@ -290,6 +443,22 @@ const firmTemplate = (data) => {
               ${packagePrice ? `<tr><th>Package Price</th><td>${packagePrice}</td></tr>` : ''}
               ${packageDuration ? `<tr><th>Package Duration</th><td>${packageDuration}</td></tr>` : ''}
               ${tourDetails ? `<tr><th>Tour Related Details</th><td>${tourDetails}</td></tr>` : ''}
+              ` : ''}
+              ${type === 'flight' ? `
+              ${from ? `<tr><th>From (Source)</th><td>${from}</td></tr>` : ''}
+              ${to ? `<tr><th>To (Destination)</th><td>${to}</td></tr>` : ''}
+              ${date ? `<tr><th>Travel Date</th><td>${date}</td></tr>` : ''}
+              ${persons ? `<tr><th>Passengers</th><td>${persons}</td></tr>` : ''}
+              ${budget ? `<tr><th>Budget</th><td>${budget}</td></tr>` : ''}
+              ` : ''}
+              ${type === 'hotels' ? `
+              ${location ? `<tr><th>Location</th><td>${location}</td></tr>` : ''}
+              ${checkIn ? `<tr><th>Check-in Date</th><td>${checkIn}</td></tr>` : ''}
+              ${checkOut ? `<tr><th>Check-out Date</th><td>${checkOut}</td></tr>` : ''}
+              ${rooms ? `<tr><th>Rooms</th><td>${rooms}</td></tr>` : ''}
+              ${adults ? `<tr><th>Adults</th><td>${adults}</td></tr>` : ''}
+              ${budget ? `<tr><th>Budget</th><td>${budget}</td></tr>` : ''}
+              ` : ''}
             </table>
           </div>
           <div class="footer">
@@ -302,8 +471,10 @@ const firmTemplate = (data) => {
 };
 
 // User Template (for applicant)
-const userTemplate = (data) => {
-  let { name, destination, date, packageName } = data;
+const userTemplate = (data, type) => {
+  let { name, destination, date, packageName, from, to, location } = data;
+  const bookingType = type === 'package' ? 'Package' : type === 'flight' ? 'Flight' : 'Hotels';
+  const bookingDetails = type === 'package' ? (packageName || destination) : type === 'flight' ? `${from || ''} to ${to || ''}`.trim() : location;
   return `
     <!DOCTYPE html>
     <html>
@@ -405,7 +576,7 @@ const userTemplate = (data) => {
           <div class="header-divider"></div>
           <div class="content">
             <h2>Thank You for Your Inquiry!</h2>
-            <p class="highlight">Dear ${name}, thank you for your interest in Global Pioneers Tours & Travels! We've received your inquiry${packageName || destination ? ` for ${packageName || destination}` : ''} and appreciate your interest in our services.</p>
+            <p class="highlight">Dear ${name}, thank you for your interest in Global Pioneers Tours & Travels! We've received your ${bookingType.toLowerCase()} inquiry${bookingDetails ? ` for ${bookingDetails}` : ''} and appreciate your interest in our services.</p>
             
             <p>Our travel experts will review your inquiry and contact you within 1-2 business days with a personalized plan.</p>
             
@@ -446,15 +617,42 @@ module.exports = async (req, res) => {
     
     await dbConnection();
     
-    let { name, phone, email, persons, destination, budget, date, tourDetails, packageName, packagePrice, packageDuration } = req.body;
+    const { type = 'package' } = req.body;
     
-    // Convert persons to number if it's a string
-    const personsNumber = typeof persons === 'string' ? parseInt(persons, 10) : persons;
+    let validationSchema;
+    let BookingModel;
+    let bookingData = { ...req.body };
     
-    let { error } = bookingValidationSchema.validate({ 
-      name, phone, email, persons: personsNumber, destination, budget, date, tourDetails, 
-      packageName, packagePrice, packageDuration 
-    });
+    // Select model and validation based on type
+    if (type === 'flight') {
+      validationSchema = flightValidationSchema;
+      BookingModel = FlightBookingModel;
+      // Convert persons to number if it's a string
+      if (bookingData.persons) {
+        bookingData.persons = typeof bookingData.persons === 'string' ? parseInt(bookingData.persons, 10) : bookingData.persons;
+      }
+    } else if (type === 'hotels') {
+      validationSchema = hotelsValidationSchema;
+      BookingModel = HotelsBookingModel;
+      // Convert rooms and adults to numbers if they're strings
+      if (bookingData.rooms) {
+        bookingData.rooms = typeof bookingData.rooms === 'string' ? parseInt(bookingData.rooms, 10) : bookingData.rooms;
+      }
+      if (bookingData.adults) {
+        bookingData.adults = typeof bookingData.adults === 'string' ? parseInt(bookingData.adults, 10) : bookingData.adults;
+      }
+    } else {
+      // Default to package
+      validationSchema = packageValidationSchema;
+      BookingModel = PackageBookingModel;
+      // Convert persons to number if it's a string
+      if (bookingData.persons) {
+        bookingData.persons = typeof bookingData.persons === 'string' ? parseInt(bookingData.persons, 10) : bookingData.persons;
+      }
+    }
+    
+    // Validate data
+    const { error } = validationSchema.validate(bookingData);
     
     if (error) {
       console.error("Validation error:", error.details[0].message);
@@ -466,11 +664,8 @@ module.exports = async (req, res) => {
         });
     }
 
-    // Create booking with converted persons value
-    const bookingData = {
-      ...req.body,
-      persons: personsNumber
-    };
+    // Ensure type is set
+    bookingData.type = type;
     
     let newBooking = new BookingModel(bookingData);
     let isSaved = await newBooking.save();
@@ -480,15 +675,15 @@ module.exports = async (req, res) => {
         await Promise.all([
           sendMail(
             SMTP_MAIL,
-            email,
-            "Thank You for Your Booking Inquiry - Global Pioneers Tours & Travels",
-            userTemplate(req.body)
+            bookingData.email,
+            `Thank You for Your ${type.charAt(0).toUpperCase() + type.slice(1)} Booking Inquiry - Global Pioneers Tours & Travels`,
+            userTemplate(bookingData, type)
           ),
           sendMail(
             SMTP_MAIL,
             SMTP_MAIL,
-            `New Booking Inquiry from ${name}`,
-            firmTemplate(req.body)
+            `New ${type.charAt(0).toUpperCase() + type.slice(1)} Booking Inquiry from ${bookingData.name}`,
+            firmTemplate(bookingData, type)
           ),
         ]);
         console.log("Emails sent successfully");

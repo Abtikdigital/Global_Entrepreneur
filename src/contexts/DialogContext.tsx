@@ -10,6 +10,10 @@ interface PackageDetails {
   includes?: string[];
   destination?: string;
   date?: string;
+  // Flight search fields from hero
+  flightFrom?: string;
+  flightTo?: string;
+  flightDate?: string;
 }
 
 interface DialogContextType {

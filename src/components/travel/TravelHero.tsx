@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Button } from '../ui/button';
 import { ArrowRight, Search, MapPin, Calendar, Plane } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
@@ -7,13 +7,46 @@ import { useDialog } from '../../contexts/DialogContext';
 
 export function TravelHero() {
   const { openDialog } = useDialog();
-  const [location, setLocation] = useState('');
-  const [date, setDate] = useState('');
+  const [flightFrom, setFlightFrom] = useState('');
+  const [flightTo, setFlightTo] = useState('');
+  const [flightDate, setFlightDate] = useState('');
+  const [locationOptions, setLocationOptions] = useState<string[]>([]);
+
+  useEffect(() => {
+    // Fetch world locations (countries/states/cities) and flatten into options
+    fetch('/data/locations.json')
+      .then((r) => r.json())
+      .then((data) => {
+        const opts: string[] = [];
+        if (data?.countries?.length) {
+          for (const country of data.countries) {
+            const countryName = country.name;
+            opts.push(countryName);
+            if (Array.isArray(country.states)) {
+              for (const state of country.states) {
+                const stateName = state.name;
+                if (stateName) opts.push(`${stateName}, ${countryName}`);
+                if (Array.isArray(state.cities)) {
+                  for (const city of state.cities) {
+                    if (city) opts.push(`${city}, ${stateName}, ${countryName}`);
+                  }
+                }
+              }
+            }
+          }
+        }
+        setLocationOptions((prev) => Array.from(new Set([...(prev || []), ...opts])));
+      })
+      .catch(() => {
+        // ignore fetch errors; static list remains
+      });
+  }, []);
 
   const handleSearch = () => {
     openDialog({
-      destination: location,
-      date: date
+      flightFrom: flightFrom,
+      flightTo: flightTo,
+      flightDate: flightDate
     });
   };
 
@@ -59,9 +92,9 @@ export function TravelHero() {
       </div>
 
       {/* Content */}
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-20 py-20 sm:py-32 md:py-40 text-center">
+      <div className="relative z-10 max-w-7xl mx:auto px-4 sm:px-6 lg:px-20 py-20 sm:py-32 md:py-40 text-center">
         <div className="max-w-4xl mx-auto mb-8 sm:mb-12">
-          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6 bg-white/10 backdrop-blur-sm border border-white/20">
+          <div className="inline-flex items-center gap-2 px-3 sm:px-4 py-2 rounded-full mb-4 sm:mb-6 bg:white/10 backdrop-blur-sm border border-white/20">
             <Plane size={16} className="sm:w-[18px] sm:h-[18px] text-white" />
             <span className="text-white text-sm sm:text-base">Your Journey Begins Here</span>
           </div>
@@ -79,25 +112,36 @@ export function TravelHero() {
           </p>
         </div>
 
-        {/* Search Box */}
+        {/* Flight Search Box */}
         <div className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4 sm:px-0">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
               <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
-                <MapPin size={20} className="text-muted-foreground" />
+                <MapPin size={20} className="text-muted-foreground shrink-0" />
                 <Input
-                  placeholder="Where to?"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  className="border-0 bg-transparent p-0 focus-visible:ring-0"
+                  placeholder="From"
+                  value={flightFrom}
+                  onChange={(e) => setFlightFrom(e.target.value)}
+                  list="hero-locations"
+                  className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
+                />
+              </div>
+              <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
+                <MapPin size={20} className="text-muted-foreground shrink-0" />
+                <Input
+                  placeholder="To"
+                  value={flightTo}
+                  onChange={(e) => setFlightTo(e.target.value)}
+                  list="hero-locations"
+                  className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
                 />
               </div>
               <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background date-input-wrapper">
                 <Calendar size={20} className="text-muted-foreground shrink-0" />
                 <Input
                   type="date"
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
+                  value={flightDate}
+                  onChange={(e) => setFlightDate(e.target.value)}
                   className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
                 />
               </div>
@@ -107,9 +151,15 @@ export function TravelHero() {
                 style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
               >
                 <Search size={18} className="mr-2" />
-                Search Packages
+                Search Flights
               </Button>
             </div>
+            {/* Shared datalist for From/To */}
+            <datalist id="hero-locations">
+              {locationOptions.map((opt) => (
+                <option key={opt} value={opt} />
+              ))}
+            </datalist>
           </div>
         </div>
 
