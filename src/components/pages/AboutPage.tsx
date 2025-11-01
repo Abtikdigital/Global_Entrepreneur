@@ -28,21 +28,21 @@ export function AboutPage() {
   ];
 
   const stats = [
-    { icon: Users, value: '5,000+', label: 'Happy Travelers' },
+    { icon: Users, value: '100+', label: 'Happy Travelers' },
     { icon: Globe, value: 'WORLDWIDE', label: 'Destinations' },
     { icon: Heart, value: '98%', label: 'Satisfaction Rate' },
   ];
 
   const team = [
     {
-      name: 'Mann R. Umraniya',
-      role: 'Co-Founder & Director',
+      name: 'Mann R Umraniya',
+      role: 'Business Director / Co Founder',
       phone: '+91 93281 00195',
       email: 'sales@globalpioneertravels.in'
     },
     {
-      name: 'Pushprajsinh D. Gohil',
-      role: 'Co-Founder & Director',
+      name: 'Pushprajsinh D Gohil',
+      role: 'Business Director / Co Founder',
       phone: '+91 81601 50178',
       email: 'sales@globalpioneertravels.in'
     },

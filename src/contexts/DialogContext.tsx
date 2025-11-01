@@ -11,6 +11,8 @@ interface PackageDetails {
   destination?: string;
   date?: string;
   // Flight search fields from hero
+  flightType?: 'domestic' | 'international';
+  flightCountry?: string;
   flightFrom?: string;
   flightTo?: string;
   flightDate?: string;

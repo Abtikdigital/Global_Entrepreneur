@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState, useMemo, useRef } from 'react';
 import { Calendar, Star, X, Loader2, User, Phone, Mail, Users, MapPin, DollarSign, Hotel, FileText, Plane, Package } from 'lucide-react';
 import Swal from 'sweetalert2';
 import axios from 'axios';
@@ -14,6 +14,8 @@ interface PackageDetails {
   includes?: string[];
   destination?: string;
   date?: string;
+  flightType?: 'domestic' | 'international';
+  flightCountry?: string;
   flightFrom?: string;
   flightTo?: string;
   flightDate?: string;
@@ -37,6 +39,8 @@ interface FormData {
   tourDetails: string;
   tripType?: 'domestic' | 'international';
   // Flight
+  flightType?: 'domestic' | 'international';
+  flightCountry?: string;
   flightFrom?: string;
   flightTo?: string;
   flightBudget?: string;
@@ -52,6 +56,25 @@ interface FormData {
 
 export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialogProps) {
   const [activeTab, setActiveTab] = useState<'package' | 'flight' | 'hotels'>('package');
+  const [countriesData, setCountriesData] = useState<any>(null);
+  const [allCountries, setAllCountries] = useState<string[]>([]);
+  const prevCountryRef = useRef<string>('');
+
+  useEffect(() => {
+    // Fetch countries data
+    fetch('/data/countries.json')
+      .then((r) => r.json())
+      .then((data) => {
+        setCountriesData(data);
+        if (data?.countries?.length) {
+          const countryNames = data.countries.map((c: any) => c.name);
+          setAllCountries(countryNames);
+        }
+      })
+      .catch(() => {
+        // ignore fetch errors
+      });
+  }, []);
 
   const {
     register,
@@ -70,8 +93,9 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
       budget: '',
       date: '',
       tourDetails: '',
-      tripType: 'domestic',
       // flight
+      flightType: 'domestic',
+      flightCountry: '',
       flightFrom: '',
       flightTo: '',
       flightBudget: '',
@@ -86,7 +110,8 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
     },
   });
 
-  const tripType = watch('tripType');
+  const flightType = watch('flightType');
+  const flightCountry = watch('flightCountry');
   const destination = watch('destination');
   const date = watch('date');
   const flightTo = watch('flightTo');
@@ -115,58 +140,109 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
     }
   }, [date, flightDate, activeTab, setValue]);
 
-  // Comprehensive suggestion lists with states, districts, and countries
-  const domesticSuggestions = useMemo(() => [
-    // Cities with States
-    'Mumbai, Maharashtra', 'Delhi, Delhi', 'Ahmedabad, Gujarat', 'Goa, Goa',
-    'Jaipur, Rajasthan', 'Udaipur, Rajasthan', 'Jodhpur, Rajasthan', 'Pushkar, Rajasthan',
-    'Manali, Himachal Pradesh', 'Shimla, Himachal Pradesh', 'Dharamshala, Himachal Pradesh',
-    'Kerala, Kerala', 'Kochi, Kerala', 'Munnar, Kerala', 'Alleppey, Kerala', 'Thekkady, Kerala',
-    'Varanasi, Uttar Pradesh', 'Agra, Uttar Pradesh', 'Lucknow, Uttar Pradesh', 'Mathura, Uttar Pradesh',
-    'Bangalore, Karnataka', 'Mysore, Karnataka', 'Coorg, Karnataka',
-    'Chennai, Tamil Nadu', 'Madurai, Tamil Nadu', 'Ooty, Tamil Nadu', 'Kodaikanal, Tamil Nadu',
-    'Hyderabad, Telangana', 'Warangal, Telangana',
-    'Kolkata, West Bengal', 'Darjeeling, West Bengal', 'Sikkim',
-    'Pune, Maharashtra', 'Nagpur, Maharashtra', 'Aurangabad, Maharashtra',
-    'Amritsar, Punjab', 'Chandigarh, Punjab',
-    'Dehradun, Uttarakhand', 'Rishikesh, Uttarakhand', 'Haridwar, Uttarakhand', 'Mussoorie, Uttarakhand',
-    'Gangtok, Sikkim', 'Nainital, Uttarakhand',
-    'Pondicherry, Puducherry', 'Mahabalipuram, Tamil Nadu',
-    'Khajuraho, Madhya Pradesh', 'Bhopal, Madhya Pradesh',
-    'Mysore, Karnataka', 'Hampi, Karnataka',
-    // Districts
-    'Agra District, Uttar Pradesh', 'Rishikesh District, Uttarakhand', 'Manali District, Himachal Pradesh',
-    // States
-    'Maharashtra', 'Gujarat', 'Rajasthan', 'Kerala', 'Tamil Nadu', 'Karnataka', 'Goa', 'Himachal Pradesh',
-    'Uttarakhand', 'Uttar Pradesh', 'West Bengal', 'Punjab', 'Sikkim'
-  ], []);
+  // Reset flight fields when flight type changes
+  useEffect(() => {
+    if (activeTab === 'flight') {
+      if (flightType === 'international') {
+        // Clear country field when switching to international
+        setValue('flightCountry', '', { shouldDirty: false });
+      }
+      // Always clear From/To when type changes
+      setValue('flightFrom', '', { shouldDirty: false });
+      setValue('flightTo', '', { shouldDirty: false });
+    }
+  }, [flightType, activeTab, setValue]);
 
-  const internationalSuggestions = useMemo(() => [
-    // UAE
-    'Dubai, UAE', 'Abu Dhabi, UAE', 'Sharjah, UAE',
-    // Thailand
-    'Bangkok, Thailand', 'Phuket, Thailand', 'Pattaya, Thailand', 'Chiang Mai, Thailand', 'Krabi, Thailand',
-    // Maldives
-    'Male, Maldives', 'Malé Atoll, Maldives',
-    // Europe
-    'Paris, France', 'Rome, Italy', 'London, UK', 'Barcelona, Spain', 'Amsterdam, Netherlands',
-    'Vienna, Austria', 'Prague, Czech Republic', 'Berlin, Germany', 'Munich, Germany',
-    'Venice, Italy', 'Florence, Italy', 'Milan, Italy', 'Zurich, Switzerland',
-    'Interlaken, Switzerland', 'Grindelwald, Switzerland',
-    // Southeast Asia
-    'Singapore, Singapore', 'Bali, Indonesia', 'Jakarta, Indonesia', 'Vietnam',
-    'Ho Chi Minh City, Vietnam', 'Hanoi, Vietnam', 'Hoi An, Vietnam', 'Da Nang, Vietnam',
-    'Phnom Penh, Cambodia', 'Siem Reap, Cambodia',
-    'Bangkok, Thailand', 'Chiang Rai, Thailand',
-    // Others
-    'Tokyo, Japan', 'Osaka, Japan', 'Seoul, South Korea', 'Hong Kong, China',
-    'Sydney, Australia', 'Melbourne, Australia', 'Auckland, New Zealand',
-    'New York, USA', 'Los Angeles, USA', 'San Francisco, USA',
-    'Toronto, Canada', 'Vancouver, Canada',
-    'Istanbul, Turkey', 'Cairo, Egypt', 'Dubai, United Arab Emirates'
-  ], []);
+  // Reset location fields when country changes for domestic flights
+  useEffect(() => {
+    if (activeTab === 'flight' && flightType === 'domestic' && flightCountry) {
+      // Only reset if country actually changed (not initial set)
+      if (prevCountryRef.current && prevCountryRef.current !== flightCountry) {
+        setValue('flightFrom', '', { shouldDirty: false });
+        setValue('flightTo', '', { shouldDirty: false });
+      }
+      prevCountryRef.current = flightCountry;
+    }
+  }, [flightCountry, flightType, activeTab, setValue]);
 
-  const suggestionList = tripType === 'international' ? internationalSuggestions : domesticSuggestions;
+  // Get location suggestions based on flight type and country
+  const flightLocationOptions = useMemo(() => {
+    if (!countriesData) return [];
+    const opts: string[] = [];
+
+    if (flightType === 'domestic') {
+      // For domestic: show states and cities of selected country
+      if (flightCountry) {
+        const country = countriesData.countries.find((c: any) => c.name === flightCountry);
+        if (country && country.states) {
+          for (const state of country.states) {
+            opts.push(state.name);
+            if (Array.isArray(state.cities)) {
+              for (const city of state.cities) {
+                if (city) opts.push(`${city}, ${state.name}`);
+              }
+            }
+          }
+        }
+      } else {
+        // If no country selected, show all states from all countries
+        for (const country of countriesData.countries) {
+          if (Array.isArray(country.states)) {
+            for (const state of country.states) {
+              opts.push(`${state.name}, ${country.name}`);
+              if (Array.isArray(state.cities)) {
+                for (const city of state.cities) {
+                  if (city) opts.push(`${city}, ${state.name}, ${country.name}`);
+                }
+              }
+            }
+          }
+        }
+      }
+    } else {
+      // For international: show all countries and their major cities
+      for (const country of countriesData.countries) {
+        opts.push(country.name);
+        if (Array.isArray(country.states)) {
+          for (const state of country.states) {
+            if (Array.isArray(state.cities)) {
+              for (const city of state.cities) {
+                if (city) opts.push(`${city}, ${country.name}`);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return Array.from(new Set(opts));
+  }, [countriesData, flightType, flightCountry]);
+
+  // Package destination suggestions - show all locations (domestic and international)
+  const packageLocationOptions = useMemo(() => {
+    if (!countriesData) return [];
+    const opts: string[] = [];
+
+    // Show all countries, states, and cities for package destinations
+    for (const country of countriesData.countries) {
+      opts.push(country.name);
+      if (Array.isArray(country.states)) {
+        for (const state of country.states) {
+          opts.push(state.name);
+          if (Array.isArray(state.cities)) {
+            for (const city of state.cities) {
+              if (city) {
+                opts.push(`${city}, ${state.name}`);
+                opts.push(`${city}, ${country.name}`);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return Array.from(new Set(opts));
+  }, [countriesData]);
 
   // Update form when packageDetails changes
   useEffect(() => {
@@ -183,6 +259,8 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
       // Handle flight data from hero section
       if (packageDetails.flightFrom || packageDetails.flightTo) {
         setActiveTab('flight');
+        if (packageDetails.flightType) setValue('flightType', packageDetails.flightType);
+        if (packageDetails.flightCountry) setValue('flightCountry', packageDetails.flightCountry);
         if (packageDetails.flightFrom) setValue('flightFrom', packageDetails.flightFrom);
         if (packageDetails.flightTo) {
           setValue('flightTo', packageDetails.flightTo);
@@ -201,7 +279,6 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
       const type = activeTab;
       const payload: any = {
         type,
-        tripType: data.tripType,
         name: data.name,
         phone: data.phone,
         email: data.email,
@@ -217,11 +294,14 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
           packageName: packageDetails?.name,
           packagePrice: packageDetails?.price,
           packageDuration: packageDetails?.duration,
+          // Don't include tripType for packages
         });
       }
 
       if (type === 'flight') {
         Object.assign(payload, {
+          flightType: data.flightType,
+          country: data.flightCountry,
           from: data.flightFrom,
           to: data.flightTo,
           date: data.flightDate,
@@ -433,15 +513,6 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
               {errors.email && <span className="error-message">{errors.email.message}</span>}
             </div>
 
-            {/* Trip type selector */}
-            <div className="custom-form-group">
-              <label>Trip Type</label>
-              <select {...register('tripType')}>
-                <option value="domestic">National (Domestic)</option>
-                <option value="international">International</option>
-              </select>
-            </div>
-
             {/* Tab-specific fields */}
             {activeTab === 'package' && (
               <>
@@ -464,7 +535,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                     <label>Destination</label>
                     <input type="text" placeholder="Enter destination" list="destination-suggestions" {...register('destination')} />
                     <datalist id="destination-suggestions">
-                      {suggestionList.map((s) => (
+                      {packageLocationOptions.map((s) => (
                         <option key={s} value={s} />
                       ))}
                     </datalist>
@@ -493,36 +564,120 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
 
             {activeTab === 'flight' && (
               <>
+                {/* Flight Type Selection - Radio Buttons */}
+                <div className="custom-form-group">
+                  <label>Flight Type</label>
+                  <div className="flex gap-4 mb-4">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        {...register('flightType')}
+                        value="domestic"
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm font-medium">Domestic</span>
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="radio"
+                        {...register('flightType')}
+                        value="international"
+                        className="w-4 h-4"
+                      />
+                      <span className="text-sm font-medium">International</span>
+                    </label>
+                  </div>
+                </div>
+                
+                {/* Country field for domestic flights */}
+                {flightType === 'domestic' && (
+                  <div className="custom-form-group">
+                    <label>Country *</label>
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
+                      <MapPin size={20} className="text-muted-foreground shrink-0" />
+                      <input 
+                        type="text" 
+                        placeholder="Select country" 
+                        list="flight-countries" 
+                        {...register('flightCountry', { required: flightType === 'domestic' ? 'Country is required for domestic flights' : false })} 
+                        className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
+                      />
+                    </div>
+                    <datalist id="flight-countries">
+                      {allCountries.map((country) => (
+                        <option key={country} value={country} />
+                      ))}
+                    </datalist>
+                    {errors.flightCountry && <span className="error-message">{errors.flightCountry.message}</span>}
+                  </div>
+                )}
+
                 <div className="custom-form-row">
                   <div className="custom-form-group">
                     <label>From *</label>
-                    <input type="text" placeholder="Source city/airport" list="from-suggestions" {...register('flightFrom', { required: 'From is required' })} />
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
+                      <MapPin size={20} className="text-muted-foreground shrink-0" />
+                      <input 
+                        type="text" 
+                        placeholder={flightType === 'domestic' ? 'Source state/city' : 'Source country/city'} 
+                        list="from-suggestions" 
+                        {...register('flightFrom', { required: 'From is required' })} 
+                        className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
+                      />
+                    </div>
                     <datalist id="from-suggestions">
-                      {suggestionList.map((s) => (
+                      {flightLocationOptions.map((s) => (
                         <option key={s} value={s} />
                       ))}
                     </datalist>
+                    {errors.flightFrom && <span className="error-message">{errors.flightFrom.message}</span>}
                   </div>
                   <div className="custom-form-group">
                     <label>To *</label>
-                    <input type="text" placeholder="Destination city/airport" list="to-suggestions" {...register('flightTo', { required: 'To is required' })} />
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
+                      <MapPin size={20} className="text-muted-foreground shrink-0" />
+                      <input 
+                        type="text" 
+                        placeholder={flightType === 'domestic' ? 'Destination state/city' : 'Destination country/city'} 
+                        list="to-suggestions" 
+                        {...register('flightTo', { required: 'To is required' })} 
+                        className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
+                      />
+                    </div>
                     <datalist id="to-suggestions">
-                      {suggestionList.map((s) => (
+                      {flightLocationOptions.map((s) => (
                         <option key={s} value={s} />
                       ))}
                     </datalist>
+                    {errors.flightTo && <span className="error-message">{errors.flightTo.message}</span>}
                   </div>
                 </div>
                 <div className="custom-form-row">
                   <div className="custom-form-group">
                     <label>Travel Date *</label>
-                    <div className="custom-date-wrapper">
-                      <input type="date" {...register('flightDate', { required: 'Travel date is required' })} className="custom-date-input" />
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background custom-date-wrapper">
+                      <Calendar size={20} className="text-muted-foreground shrink-0" />
+                      <input 
+                        type="date" 
+                        {...register('flightDate', { required: 'Travel date is required' })} 
+                        className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1 custom-date-input" 
+                      />
                     </div>
+                    {errors.flightDate && <span className="error-message">{errors.flightDate.message}</span>}
                   </div>
                   <div className="custom-form-group">
                     <label>Passengers *</label>
-                    <input type="number" min="1" placeholder="Total passengers" {...register('persons', { required: 'Passengers is required' })} />
+                    <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
+                      <Users size={20} className="text-muted-foreground shrink-0" />
+                      <input 
+                        type="number" 
+                        min="1" 
+                        placeholder="Total passengers" 
+                        {...register('persons', { required: 'Passengers is required' })} 
+                        className={`border-0 bg-transparent p-0 focus-visible:ring-0 flex-1 ${errors.persons ? 'error-input' : ''}`}
+                      />
+                    </div>
+                    {errors.persons && <span className="error-message">{errors.persons.message}</span>}
                   </div>
                 </div>
                 <div className="custom-form-group">
@@ -539,7 +694,7 @@ export function BookingDialog({ isOpen, onClose, packageDetails }: BookingDialog
                     <label>Location *</label>
                     <input type="text" placeholder="City / Area" list="hotel-suggestions" {...register('hotelLocation', { required: 'Location is required' })} />
                     <datalist id="hotel-suggestions">
-                      {suggestionList.map((s) => (
+                      {packageLocationOptions.map((s) => (
                         <option key={s} value={s} />
                       ))}
                     </datalist>

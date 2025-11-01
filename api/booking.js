@@ -430,7 +430,7 @@ const firmTemplate = (data, type) => {
             <p class="highlight">You have received a new booking inquiry with the following details:</p>
             <table>
               <tr><th>Booking Type</th><td>${type === 'package' ? '📦 Package' : type === 'flight' ? '✈️ Flight' : '🏨 Hotels'}</td></tr>
-              <tr><th>Trip Type</th><td>${tripType === 'international' ? 'International' : 'National (Domestic)'}</td></tr>
+              ${tripType && type !== 'package' ? `<tr><th>Trip Type</th><td>${tripType === 'international' ? 'International' : 'National (Domestic)'}</td></tr>` : ''}
               <tr><th>Full Name</th><td>${name}</td></tr>
               <tr><th>Email</th><td><a href="mailto:${email}">${email}</a></td></tr>
               <tr><th>Phone Number</th><td><a href="tel:+91${phone}">${phone}</a></td></tr>

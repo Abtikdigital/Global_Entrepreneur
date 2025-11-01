@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { Button } from '../ui/button';
 import { ArrowRight, Search, MapPin, Calendar, Plane } from 'lucide-react';
 import { ImageWithFallback } from '../figma/ImageWithFallback';
@@ -7,43 +7,95 @@ import { useDialog } from '../../contexts/DialogContext';
 
 export function TravelHero() {
   const { openDialog } = useDialog();
+  const [flightType, setFlightType] = useState<'domestic' | 'international'>('domestic');
+  const [flightCountry, setFlightCountry] = useState('');
   const [flightFrom, setFlightFrom] = useState('');
   const [flightTo, setFlightTo] = useState('');
   const [flightDate, setFlightDate] = useState('');
-  const [locationOptions, setLocationOptions] = useState<string[]>([]);
+  const [countriesData, setCountriesData] = useState<any>(null);
+  const [allCountries, setAllCountries] = useState<string[]>([]);
 
   useEffect(() => {
-    // Fetch world locations (countries/states/cities) and flatten into options
-    fetch('/data/locations.json')
+    // Fetch countries data
+    fetch('/data/countries.json')
       .then((r) => r.json())
       .then((data) => {
-        const opts: string[] = [];
+        setCountriesData(data);
         if (data?.countries?.length) {
-          for (const country of data.countries) {
-            const countryName = country.name;
-            opts.push(countryName);
-            if (Array.isArray(country.states)) {
-              for (const state of country.states) {
-                const stateName = state.name;
-                if (stateName) opts.push(`${stateName}, ${countryName}`);
-                if (Array.isArray(state.cities)) {
-                  for (const city of state.cities) {
-                    if (city) opts.push(`${city}, ${stateName}, ${countryName}`);
-                  }
+          const countryNames = data.countries.map((c: any) => c.name);
+          setAllCountries(countryNames);
+        }
+      })
+      .catch(() => {
+        // ignore fetch errors
+      });
+  }, []);
+
+  // Get states for selected country (domestic flights)
+  const statesForCountry = useMemo(() => {
+    if (!countriesData || !flightCountry || flightType !== 'domestic') return [];
+    const country = countriesData.countries.find((c: any) => c.name === flightCountry);
+    if (!country || !country.states) return [];
+    return country.states.map((s: any) => s.name);
+  }, [countriesData, flightCountry, flightType]);
+
+  // Get locations for From/To fields based on flight type
+  const locationOptions = useMemo(() => {
+    if (!countriesData) return [];
+    const opts: string[] = [];
+
+    if (flightType === 'domestic') {
+      // For domestic: show states and cities of selected country
+      if (flightCountry) {
+        const country = countriesData.countries.find((c: any) => c.name === flightCountry);
+        if (country && country.states) {
+          for (const state of country.states) {
+            opts.push(state.name);
+            if (Array.isArray(state.cities)) {
+              for (const city of state.cities) {
+                if (city) opts.push(`${city}, ${state.name}`);
+              }
+            }
+          }
+        }
+      } else {
+        // If no country selected, show all states from all countries
+        for (const country of countriesData.countries) {
+          if (Array.isArray(country.states)) {
+            for (const state of country.states) {
+              opts.push(`${state.name}, ${country.name}`);
+              if (Array.isArray(state.cities)) {
+                for (const city of state.cities) {
+                  if (city) opts.push(`${city}, ${state.name}, ${country.name}`);
                 }
               }
             }
           }
         }
-        setLocationOptions((prev) => Array.from(new Set([...(prev || []), ...opts])));
-      })
-      .catch(() => {
-        // ignore fetch errors; static list remains
-      });
-  }, []);
+      }
+    } else {
+      // For international: show all countries and their major cities
+      for (const country of countriesData.countries) {
+        opts.push(country.name);
+        if (Array.isArray(country.states)) {
+          for (const state of country.states) {
+            if (Array.isArray(state.cities)) {
+              for (const city of state.cities) {
+                if (city) opts.push(`${city}, ${country.name}`);
+              }
+            }
+          }
+        }
+      }
+    }
+
+    return Array.from(new Set(opts));
+  }, [countriesData, flightType, flightCountry]);
 
   const handleSearch = () => {
     openDialog({
+      flightType: flightType,
+      flightCountry: flightCountry,
       flightFrom: flightFrom,
       flightTo: flightTo,
       flightDate: flightDate
@@ -113,26 +165,79 @@ export function TravelHero() {
         </div>
 
         {/* Flight Search Box */}
-        <div className="max-w-4xl mx-auto mb-6 sm:mb-8 px-4 sm:px-0">
+        <div className="max-w-5xl mx-auto mb-6 sm:mb-8 px-4 sm:px-0">
           <div className="bg-white rounded-xl sm:rounded-2xl shadow-2xl p-4 sm:p-6">
-            <div className="grid grid-cols-1 sm:grid-cols-4 gap-3 sm:gap-4">
+            {/* Flight Type Selection */}
+            <div className="mb-4 flex gap-3 justify-center">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="flightType"
+                  value="domestic"
+                  checked={flightType === 'domestic'}
+                  onChange={(e) => {
+                    setFlightType('domestic');
+                    setFlightFrom('');
+                    setFlightTo('');
+                  }}
+                  className="w-4 h-4"
+                />
+                <span className="text-sm font-medium">Domestic</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="flightType"
+                  value="international"
+                  checked={flightType === 'international'}
+                  onChange={(e) => {
+                    setFlightType('international');
+                    setFlightCountry('');
+                    setFlightFrom('');
+                    setFlightTo('');
+                  }}
+                  className="w-4 h-4"
+                />
+                <span className="text-sm font-medium">International</span>
+              </label>
+            </div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3 sm:gap-4">
+              {/* Country field for domestic flights */}
+              {flightType === 'domestic' && (
+                <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
+                  <MapPin size={20} className="text-muted-foreground shrink-0" />
+                  <Input
+                    placeholder="Country"
+                    value={flightCountry}
+                    onChange={(e) => {
+                      setFlightCountry(e.target.value);
+                      setFlightFrom('');
+                      setFlightTo('');
+                    }}
+                    list="hero-countries"
+                    className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
+                  />
+                </div>
+              )}
+
               <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
                 <MapPin size={20} className="text-muted-foreground shrink-0" />
                 <Input
-                  placeholder="From"
+                  placeholder={flightType === 'domestic' ? 'From (State/City)' : 'From (Country/City)'}
                   value={flightFrom}
                   onChange={(e) => setFlightFrom(e.target.value)}
-                  list="hero-locations"
+                  list="hero-from-locations"
                   className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
                 />
               </div>
               <div className="flex items-center gap-3 p-3 border border-border rounded-lg bg-input-background">
                 <MapPin size={20} className="text-muted-foreground shrink-0" />
                 <Input
-                  placeholder="To"
+                  placeholder={flightType === 'domestic' ? 'To (State/City)' : 'To (Country/City)'}
                   value={flightTo}
                   onChange={(e) => setFlightTo(e.target.value)}
-                  list="hero-locations"
+                  list="hero-to-locations"
                   className="border-0 bg-transparent p-0 focus-visible:ring-0 flex-1"
                 />
               </div>
@@ -147,15 +252,26 @@ export function TravelHero() {
               </div>
               <Button 
                 onClick={handleSearch}
-                className="bg-gradient-to-r text-white hover:opacity-90 h-full text-sm sm:text-base whitespace-nowrap"
+                className="bg-gradient-to-r text-white hover:opacity-90 h-full text-sm sm:text-base whitespace-nowrap col-span-1 sm:col-span-2 lg:col-span-1"
                 style={{background: 'linear-gradient(to right, #385678, #17947F)'}}
               >
                 <Search size={18} className="mr-2" />
                 Search Flights
               </Button>
             </div>
-            {/* Shared datalist for From/To */}
-            <datalist id="hero-locations">
+            
+            {/* Datalists */}
+            <datalist id="hero-countries">
+              {allCountries.map((country) => (
+                <option key={country} value={country} />
+              ))}
+            </datalist>
+            <datalist id="hero-from-locations">
+              {locationOptions.map((opt) => (
+                <option key={opt} value={opt} />
+              ))}
+            </datalist>
+            <datalist id="hero-to-locations">
               {locationOptions.map((opt) => (
                 <option key={opt} value={opt} />
               ))}

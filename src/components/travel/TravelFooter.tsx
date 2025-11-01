@@ -57,7 +57,7 @@ export function TravelFooter() {
           {/* Company Info */}
           <div className="lg:col-span-2">
             <div className="flex items-center gap-2 mb-4">
-           <ImageWithFallback src="/images/Logo.png" alt="Logo" className="!w-44 !h-18" />
+           <ImageWithFallback src="/images/Logo.png" alt="Logo" className="!w-28" />
             </div>
             <p className="text-white/70 mb-6">
               We are a full-service travel agency specializing in customized luxury travel, adventure, 
@@ -68,7 +68,7 @@ export function TravelFooter() {
               <a href="#" className="w-10 h-10 rounded-full bg-white/10 hover:opacity-90 flex items-center justify-center transition-all" style={{backgroundImage: 'linear-gradient(to right, #385678, #17947F)'}}>
                 <Facebook size={20} />
               </a>
-              <a href="#" className="w-10 h-10 rounded-full bg-white/10 hover:opacity-90 flex items-center justify-center transition-all" style={{backgroundImage: 'linear-gradient(to right, #385678, #17947F)'}}>
+              <a href="https://www.instagram.com/globalpioneerspvt.ltd?igsh=MWZ0N3NzN3Fwcmx1Zg%3D%3D&utm_source=qr" target="_blank" rel="noopener noreferrer" className="w-10 h-10 rounded-full bg-white/10 hover:opacity-90 flex items-center justify-center transition-all" style={{backgroundImage: 'linear-gradient(to right, #385678, #17947F)'}}>
                 <Instagram size={20} />
               </a>
               <a href="#" className="w-10 h-10 rounded-full bg-white/10 hover:opacity-90 flex items-center justify-center transition-all" style={{backgroundImage: 'linear-gradient(to right, #385678, #17947F)'}}>

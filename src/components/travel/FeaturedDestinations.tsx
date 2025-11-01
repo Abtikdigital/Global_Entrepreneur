@@ -89,7 +89,7 @@ export function FeaturedDestinations({ onNavigate }: FeaturedDestinationsProps) 
                 <div className="flex items-center justify-between">
                   <div>
                     <span className="text-sm text-muted-foreground">Starting from</span>
-                    <div style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{destination.price}</div>
+                    {/* <div style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{destination.price}</div> */}
                   </div>
                   <div style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}} className="group-hover:opacity-80 transition-all font-medium">
                     Details <ArrowRight size={14} className="inline ml-1" />

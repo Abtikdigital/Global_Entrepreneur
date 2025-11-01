@@ -85,7 +85,7 @@ export function TravelNavigation() {
               onClick={handleNavigate}
               className="flex items-center gap-2 hover:opacity-80 transition-opacity group flex-shrink-0"
             >
-              <ImageWithFallback src="/images/Logo.jpg" alt="Logo" className="!w-20 !h-16" />
+              <ImageWithFallback src="/images/Logo.png" alt="Logo" className=" !h-18" />
             </Link>
 
             {/* Desktop Navigation - Centered */}
