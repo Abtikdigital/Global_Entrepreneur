@@ -134,11 +134,11 @@ export function PackagesPage() {
         </div>
 
         <div className="flex items-center justify-between pt-4 border-t border-border">
-          <div>
+          {/* <div>
             <span className="text-xs text-muted-foreground block">Starting from</span>
             <span className="text-2xl" style={{background: 'linear-gradient(to right, #385678, #17947F)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent'}}>{pkg.price}</span>
             <span className="text-xs text-muted-foreground">/person</span>
-          </div>
+          </div> */}
           <Button 
             onClick={() => handleViewDetails(pkg)}
             className="text-white hover:opacity-90"
